@@ -2,108 +2,211 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071f3d">
   <title>My Profile — KFGC MEDIA APP</title>
-
-  <!-- Favicon -->
   <link rel="icon" href="favicon.ico" type="image/x-icon">
-
-  <!-- Font Awesome -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
-  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="profile.css">
 </head>
-<body>
-
-  <!-- Header -->
+<body class="profile-page">
   <header class="site-header">
     <div class="header-inner">
-
-      <!-- Brand -->
-      <a href="index.html" class="brand">
-        <img src="kfgc.jpg" alt="KFGC Media App Logo" class="logo">
-        <span class="brand-text">KFGC MEDIA APP</span>
+      <a href="index.html" class="brand" aria-label="KFGC Media App home">
+        <img src="kfgc.jpg" alt="KFGC Media App logo" class="logo">
+        <span class="brand-text">KFGC <strong>MEDIA APP</strong><small>Worship · Connect · Grow</small></span>
       </a>
 
-      <!-- Navigation -->
+      <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
       <nav id="primary-nav" class="primary-nav">
         <ul>
           <li><a href="about-us.html"><i class="fa-solid fa-church"></i> About Us</a></li>
           <li><a href="services.html"><i class="fa-solid fa-hands-praying"></i> Services</a></li>
-          <li><a href="sermons.html"><i class="fa-solid fa-broadcast-tower"></i> Sermons</a></li>
+          <li><a href="sermons.html"><i class="fa-solid fa-podcast"></i> Sermons</a></li>
           <li><a href="events.html"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
-          <li><a href="donate.html"><i class="fa-solid fa-heart"></i> Donate</a></li>
-          <li id="adminMenu" style="display:none;"><a href="admin.html"><i class="fa-solid fa-bell"></i> OFFICIAL USE ONLY</a></li>
+          <li><a href="donate.html"><i class="fa-solid fa-heart"></i> Give</a></li>
+          <li id="adminMenu" class="admin-menu" style="display:none"><a href="admin.html"><i class="fa-solid fa-shield-halved"></i> Admin</a></li>
         </ul>
       </nav>
 
-      <!-- Profile Header -->
-      <div class="profile-header">
-        <a href="profile.html">
-          <img id="headerDp" src="user.jpg" alt="Profile" class="profile-img">
+      <div class="header-account">
+        <a href="profile.html" class="header-profile-link" aria-label="Open profile">
+          <img id="headerDp" src="user.jpg" alt="" class="header-avatar">
         </a>
-        <span id="headerName">Member</span>
-        <button id="logoutBtn" class="btn danger">Logout</button>
+        <span id="headerName" class="header-name">Member</span>
+        <button id="logoutBtn" class="logout-button" type="button"><i class="fa-solid fa-right-from-bracket"></i><span>Log out</span></button>
       </div>
-
     </div>
   </header>
 
-  <!-- Main Profile -->
   <main class="profile-main">
-    <div class="profile-card">
-      <h2>My Profile</h2>
-
-      <form id="profileForm">
-        <label for="fullName">Full Name</label>
-        <input type="text" id="fullName" placeholder="Enter full name" required>
-
-        <label for="dp">Profile Picture</label>
-        <input type="file" id="dp" accept="image/*">
-
-        <div class="dp-preview-container">
-          <img id="dpPreview" src="user.jpg" alt="DP Preview" class="profile-img">
+    <section class="profile-hero" aria-labelledby="profileDisplayName">
+      <div class="hero-image-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-avatar-wrap">
+          <img id="heroDp" src="user.jpg" alt="Your profile picture" class="hero-avatar">
+          <span class="member-status" title="KFGC member"><i class="fa-solid fa-cross"></i></span>
         </div>
+        <div class="hero-copy">
+          <p class="eyebrow"><i class="fa-solid fa-user-check"></i> YOUR KFGC ACCOUNT</p>
+          <h1 id="profileDisplayName">Welcome, Member</h1>
+          <p class="hero-subtitle"><i class="fa-solid fa-location-dot"></i> Kirinda Full Gospel Church · Nyendo, Masaka</p>
+          <a href="#edit-profile" class="hero-edit-link"><i class="fa-solid fa-pen"></i> Edit profile</a>
+        </div>
+        <div class="hero-badge"><i class="fa-solid fa-heart"></i><span>Worship<br>Connect<br>Grow</span></div>
+      </div>
+    </section>
 
-        <progress id="uploadProgress" value="0" max="100" style="width:100%; display:none;"></progress>
+    <div class="profile-layout">
+      <section class="profile-main-column">
+        <section class="panel completion-panel" aria-labelledby="completionTitle">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">YOUR ACCOUNT</p>
+              <h2 id="completionTitle">Profile completion</h2>
+            </div>
+            <span class="completion-number" id="completionPercent">50%</span>
+          </div>
+          <div class="progress-track" role="progressbar" aria-label="Profile completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" id="completionBar">
+            <span id="completionFill" class="progress-fill"></span>
+          </div>
+          <p class="muted" id="completionMessage">Add a profile picture and your name to personalize your account.</p>
+        </section>
 
-        <button type="submit" class="btn">Update Profile</button>
-      </form>
+        <section class="panel" id="edit-profile" aria-labelledby="editProfileTitle">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">PERSONAL DETAILS</p>
+              <h2 id="editProfileTitle">My profile</h2>
+            </div>
+            <span class="heading-icon"><i class="fa-solid fa-id-card"></i></span>
+          </div>
 
-      <p id="msg"></p>
+          <form id="profileForm" class="profile-form">
+            <div class="profile-picture-editor">
+              <div class="picture-preview-wrap">
+                <img id="dpPreview" src="user.jpg" alt="Profile picture preview" class="picture-preview">
+                <span class="camera-badge"><i class="fa-solid fa-camera"></i></span>
+              </div>
+              <div class="picture-editor-copy">
+                <h3>Your profile photo</h3>
+                <p class="muted">Use a clear square photo so other members can recognize you.</p>
+                <label for="dp" class="upload-button"><i class="fa-solid fa-cloud-arrow-up"></i> Choose photo</label>
+                <input type="file" id="dp" accept="image/jpeg,image/png,image/webp" hidden>
+                <span id="selectedFileName" class="selected-file-name">No new photo selected</span>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label for="fullName">Full name</label>
+              <div class="input-with-icon">
+                <i class="fa-regular fa-user"></i>
+                <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" autocomplete="name" maxlength="100" required>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label>Email address</label>
+              <div class="input-with-icon input-readonly">
+                <i class="fa-regular fa-envelope"></i>
+                <input type="text" id="profileEmail" value="" placeholder="Your signed-in email" readonly aria-describedby="emailHelp">
+              </div>
+              <small id="emailHelp" class="field-help">Your email comes from your signed-in account.</small>
+            </div>
+
+            <progress id="uploadProgress" value="0" max="100" class="upload-progress" aria-label="Photo upload progress"></progress>
+            <p id="msg" class="form-message" role="status" aria-live="polite"></p>
+
+            <div class="form-actions">
+              <button type="submit" class="primary-button" id="saveProfileBtn"><i class="fa-solid fa-check"></i> Save changes</button>
+              <button type="reset" class="secondary-button" id="resetProfileBtn">Reset form</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel quick-actions-panel" aria-labelledby="quickActionsTitle">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">STAY CONNECTED</p>
+              <h2 id="quickActionsTitle">Quick actions</h2>
+            </div>
+          </div>
+          <div class="quick-actions-grid">
+            <a class="action-card action-prayer" href="prayer-requests.html"><span class="action-icon"><i class="fa-solid fa-hands-praying"></i></span><span><strong>Prayer requests</strong><small>Share a prayer need</small></span><i class="fa-solid fa-chevron-right action-arrow"></i></a>
+            <a class="action-card action-testimonial" href="testimonials.html"><span class="action-icon"><i class="fa-solid fa-star"></i></span><span><strong>Testimonials</strong><small>Share your testimony</small></span><i class="fa-solid fa-chevron-right action-arrow"></i></a>
+            <a class="action-card action-events" href="events.html"><span class="action-icon"><i class="fa-solid fa-calendar-days"></i></span><span><strong>Church events</strong><small>See what's coming</small></span><i class="fa-solid fa-chevron-right action-arrow"></i></a>
+            <a class="action-card action-sermons" href="sermons.html"><span class="action-icon"><i class="fa-solid fa-play"></i></span><span><strong>Sermons & media</strong><small>Watch and listen</small></span><i class="fa-solid fa-chevron-right action-arrow"></i></a>
+            <a class="action-card action-giving" href="donate.html"><span class="action-icon"><i class="fa-solid fa-heart"></i></span><span><strong>Give to the church</strong><small>Tithes and offerings</small></span><i class="fa-solid fa-chevron-right action-arrow"></i></a>
+            <a class="action-card action-settings" href="settings.html"><span class="action-icon"><i class="fa-solid fa-sliders"></i></span><span><strong>Account settings</strong><small>Manage your account</small></span><i class="fa-solid fa-chevron-right action-arrow"></i></a>
+          </div>
+        </section>
+      </section>
+
+      <aside class="profile-side-column">
+        <section class="panel member-card">
+          <div class="member-card-icon"><i class="fa-solid fa-church"></i></div>
+          <p class="eyebrow">YOUR CHURCH FAMILY</p>
+          <h2>Growing together in faith</h2>
+          <p class="muted">Stay connected with worship services, church news, testimonies, and the KFGC community.</p>
+          <a href="services.html" class="outline-button">Explore services <i class="fa-solid fa-arrow-right"></i></a>
+        </section>
+
+        <section class="verse-card">
+          <i class="fa-solid fa-book-bible verse-icon"></i>
+          <p class="verse-label">A WORD TO ENCOURAGE YOU</p>
+          <blockquote>“For we are God's workmanship, created in Christ Jesus to do good works...”</blockquote>
+          <cite>Ephesians 2:10</cite>
+        </section>
+
+        <section class="panel account-links">
+          <h2>Account & help</h2>
+          <a href="terms.html"><i class="fa-solid fa-file-contract"></i><span>Terms & Conditions</span><i class="fa-solid fa-chevron-right"></i></a>
+          <a href="privacy-policy.html"><i class="fa-solid fa-shield-halved"></i><span>Privacy Policy</span><i class="fa-solid fa-chevron-right"></i></a>
+          <a href="faq.html"><i class="fa-regular fa-circle-question"></i><span>Help & FAQs</span><i class="fa-solid fa-chevron-right"></i></a>
+          <a href="contact-us.html"><i class="fa-regular fa-envelope"></i><span>Contact the church</span><i class="fa-solid fa-chevron-right"></i></a>
+        </section>
+      </aside>
     </div>
   </main>
 
-  <!-- Footer -->
-  <footer class="site-footer">
+  <footer class="site-footer profile-footer">
     <div class="footer-inner">
-      <a href="terms.html">Terms & Conditions</a>
-
+      <a href="terms.html" class="footer-terms">Terms & Conditions</a>
       <div class="footer-center">
-        <p>Follow us</p>
-        <nav class="social">
-          <a href="https://whatsapp.com/channel/0029VaoQRhnHwXb9FX0Ub503" target="_blank" rel="noopener"><img src="whatsapp.jpg" alt="WhatsApp"></a>
-          <a href="https://www.youtube.com/@KIRINDAFULLGOSPELCHURCHNYENDO" target="_blank" rel="noopener"><img src="youtube-icon.png" alt="YouTube"></a>
-          <a href="https://www.tiktok.com/@kirindafullgospel" target="_blank" rel="noopener"><img src="tiktok.png" alt="TikTok"></a>
-          <a href="https://www.facebook.com/profile.php?id=61579066273777" target="_blank" rel="noopener"><img src="facebook.png" alt="Facebook"></a>
-          <a href="https://t.me/+wJRnn7SQvehhZTFk" target="_blank" rel="noopener"><img src="telegram.jpg" alt="Telegram"></a>
-          <a href="https://kirindafullgospelchurchnyendo-rgb.github.io/kfgc-media-app/" target="_blank" rel="noopener"><img src="share.jpg" alt="App"></a>
-          <a href="https://maps.app.goo.gl/v8nPT1WvCGwSKiQF9" target="_blank" rel="noopener"><img src="location.jpg" alt="Location"></a>
+        <p>Follow KFGC</p>
+        <nav class="social" aria-label="KFGC social media">
+          <a href="https://whatsapp.com/channel/0029VaoQRhnHwXb9FX0Ub503" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><img src="whatsapp.jpg" alt=""></a>
+          <a href="https://www.youtube.com/@KIRINDAFULLGOSPELCHURCHNYENDO" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><img src="youtube-icon.png" alt=""></a>
+          <a href="https://www.tiktok.com/@kirindafullgospel" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><img src="tiktok.png" alt=""></a>
+          <a href="https://www.facebook.com/profile.php?id=61579066273777" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><img src="facebook.png" alt=""></a>
+          <a href="https://t.me/+wJRnn7SQvehhZTFk" target="_blank" rel="noopener noreferrer" aria-label="Telegram"><img src="telegram.jpg" alt=""></a>
+          <a href="https://kirindafullgospelchurchnyendo-rgb.github.io/kfgc-media-app/" target="_blank" rel="noopener noreferrer" aria-label="KFGC app"><img src="share.jpg" alt=""></a>
+          <a href="https://maps.app.goo.gl/v8nPT1WvCGwSKiQF9" target="_blank" rel="noopener noreferrer" aria-label="Church location"><img src="location.jpg" alt=""></a>
         </nav>
       </div>
-
-      <div class="footer-right">
-        <p>&copy; 2026 KFGC MEDIA APP. All Rights Reserved.</p>
-      </div>
+      <p class="footer-copyright">&copy; 2026 KFGC MEDIA APP. All Rights Reserved.</p>
     </div>
   </footer>
 
-  <!-- Scripts -->
   <script type="module" src="firebase.js"></script>
   <script type="module" src="auth-guard.js"></script>
   <script type="module" src="header.js"></script>
   <script type="module" src="profile.js"></script>
-
+  <script>
+    const menuToggle = document.getElementById('mobileMenuToggle');
+    const nav = document.getElementById('primary-nav');
+    if (menuToggle && nav) {
+      menuToggle.addEventListener('click', () => {
+        const isOpen = nav.classList.toggle('nav-open');
+        menuToggle.setAttribute('aria-expanded', String(isOpen));
+        menuToggle.innerHTML = isOpen ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-bars"></i>';
+      });
+    }
+  </script>
 </body>
-</html>
+                                        </html>
+  
