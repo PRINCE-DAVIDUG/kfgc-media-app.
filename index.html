@@ -32,7 +32,7 @@
     "@context": "https://schema.org",
     "@type": "Church",
     "name": "Kirinda Full Gospel Church",
-    "url": "https://kirindafullgospelchurchnyendo-rgb.github.io/kfgc-media-app/",
+    "url": "https://prince-davidug.github.io/kfgc-media-app./",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Nyendo",
@@ -58,7 +58,7 @@
   <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="sty.css">
-
+<link rel="stylesheet" href="profile.css">
 
   <script src="theme.js" defer></script>
   <!-- Dark Mode Toggle & Initial Load -->
@@ -100,30 +100,27 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
-
-  <script src="script.js" defer></script>
+ 
 </head>
 <body>
-  <!-- Header -->
+  <body class="profile-page">
   <header class="site-header">
     <div class="header-inner">
-      <button id="menu-toggle" class="menu-toggle" aria-expanded="false" aria-controls="primary-nav">
-        <i class="fa fa-bars"></i>
-        <span class="sr-only">Menu</span>
-      </button>
-
-      <a href="index.html" class="brand">
-        <img src="kfgc.jpg" alt="KFGC Media App Logo" class="logo" loading="lazy">
-        <span class="brand-text">KFGC MEDIA APP</span>
+      <a href="index.html" class="brand" aria-label="KFGC Media App home">
+        <img src="kfgc.jpg" alt="KFGC Media App logo" class="logo">
+        <span class="brand-text">KFGC <strong>MEDIA APP</strong><small>Worship · Connect · Grow</small></span>
       </a>
 
-      <nav id="primary-nav" class="primary-nav" aria-label="Primary">
+      <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <nav id="primary-nav" class="primary-nav">
         <ul>
-          <li><a href="about-us.html"><i class="fa-solid fa-church"></i> About Us</a></li>
+            <li><a href="about-us.html"><i class="fa-solid fa-church"></i> About Us</a></li>
           <li><a href="services.html"><i class="fa-solid fa-hands-praying"></i> Services</a></li>
-          <li><a href="sermons.html"><i class="fa-solid fa-broadcast-tower"></i> Sermons</a></li>
-          <li><a href="audio.html"><i class="fa-solid fa-headset"></i> Audio-Sermons</a></li>
-        
+          <li><a href="sermons.html"><i class="fa-solid fa-tower-broadcast"></i> Sermons</a></li>
+          <li><a href="audio.html"><i class="fa-solid fa-headset"></i> Audio Sermons</a></li>
           <li><a href="events.html"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
           <li><a href="testimonials.html"><i class="fa-solid fa-comment-dots"></i> Testimonials</a></li>
           <li><a href="donate.html"><i class="fa-solid fa-heart"></i> Donate</a></li>
@@ -132,16 +129,17 @@ if ("serviceWorker" in navigator) {
           <li><a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a></li>
           <li><a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a></li>
           <li><a href="notifications.html"><i class="fa-solid fa-bell"></i> Notifications</a></li>
-        </ul>
+         </ul>
       </nav>
 
-      <a class="profile-link" href="profile.html" title="Profile">
-        <img src="user.jpg" alt="User profile" class="profile-img" loading="lazy">
-      </a>
-
-      
+      <div class="header-account">
+        <a href="profile.html" class="header-profile-link" aria-label="Open profile">
+          <img id="headerDp" src="user.jpg" alt="" class="header-avatar">
+        </a>
+   </div>
     </div>
   </header>
+
 
   <!-- Hero Slider -->
   <div class="hero">
@@ -310,5 +308,20 @@ if ("serviceWorker" in navigator) {
       </div>
     </div>
   </footer>
+    
+    <script type="module" src="header.js"></script>
+  <script type="module" src="profile.js"></script>
+  <script>
+    const menuToggle = document.getElementById('mobileMenuToggle');
+    const nav = document.getElementById('primary-nav');
+    if (menuToggle && nav) {
+      menuToggle.addEventListener('click', () => {
+        const isOpen = nav.classList.toggle('nav-open');
+        menuToggle.setAttribute('aria-expanded', String(isOpen));
+        menuToggle.innerHTML = isOpen ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-bars"></i>';
+      });
+    }
+  </script>
 </body>
-</html>
+  </html>
+           
