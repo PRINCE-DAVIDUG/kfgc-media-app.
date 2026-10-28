@@ -1,21 +1,35 @@
-// profile.js
+// ======================================================
+// KFGC MEDIA APP — PROFILE PAGE
+// Firebase Authentication + Cloudinary + Google Sheets
+// ======================================================
+
 import { auth } from "./firebase.js";
 
 import {
   onAuthStateChanged,
   updateProfile,
-  signOut
+  signOut,
+  getIdToken
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// Cloudinary configuration
+// ======================================================
+// CONFIGURATION
+// ======================================================
+
 const CLOUDINARY_CLOUD_NAME = "dvnyyq3ru";
 const CLOUDINARY_UPLOAD_PRESET = "kfgc_profiles";
 
-// Google Apps Script endpoint
 const SHEET_ENDPOINT =
   "https://script.google.com/macros/s/AKfycbx__CHeBV6cEkMycG85Nn-ThWkW0SJIHTRhwXNnyjutTZ4r0gCSs4EVDtFiCt0MFuPx/exec";
 
-// HTML elements
+const DEFAULT_PHOTO = "user.jpg";
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const UPLOAD_TIMEOUT = 60000;
+
+// ======================================================
+// HTML ELEMENTS
+// ======================================================
+
 const fullNameInput = document.getElementById("fullName");
 const dpInput = document.getElementById("dp");
 const dpPreview = document.getElementById("dpPreview");
@@ -28,17 +42,74 @@ const headerDp = document.getElementById("headerDp");
 const logoutBtn = document.getElementById("logoutBtn");
 const adminMenu = document.getElementById("adminMenu");
 
-const DEFAULT_PHOTO = "user.jpg";
+// ======================================================
+// STATE
+// ======================================================
 
-// Display messages
+let currentUser = null;
+let previewObjectURL = null;
+let isSaving = false;
+
+// ======================================================
+// MESSAGE HELPER
+// ======================================================
+
 function showMessage(message, isError = false) {
-  if (!msg) return;
+  if (!msg) {
+    console.log(message);
+    return;
+  }
+
   msg.textContent = message;
   msg.style.color = isError ? "#c62828" : "#16803c";
+  msg.style.display = "block";
 }
 
-// Load authenticated user's profile
+// ======================================================
+// PROFILE PHOTO HELPERS
+// ======================================================
+
+function setPhoto(element, url) {
+  if (!element) return;
+
+  element.onerror = () => {
+    element.onerror = null;
+    element.src = DEFAULT_PHOTO;
+  };
+
+  element.src = url || DEFAULT_PHOTO;
+}
+
+function setProgress(value, visible = true) {
+  if (!uploadProgress) return;
+
+  uploadProgress.style.display = visible ? "block" : "none";
+  uploadProgress.value = Math.max(0, Math.min(100, value));
+}
+
+function setSavingState(saving) {
+  isSaving = saving;
+
+  const button = profileForm?.querySelector(
+    'button[type="submit"], input[type="submit"]'
+  );
+
+  if (button) {
+    button.disabled = saving;
+    button.textContent = saving ? "Saving..." : "Save Profile";
+  }
+
+  if (fullNameInput) fullNameInput.disabled = saving;
+  if (dpInput) dpInput.disabled = saving;
+}
+
+// ======================================================
+// LOAD USER PROFILE
+// ======================================================
+
 onAuthStateChanged(auth, async (user) => {
+  currentUser = user;
+
   if (!user) {
     window.location.replace("auth.html");
     return;
@@ -48,30 +119,33 @@ onAuthStateChanged(auth, async (user) => {
     headerName.textContent = user.displayName || "Member";
   }
 
-  if (headerDp) {
-    headerDp.src = user.photoURL || DEFAULT_PHOTO;
-  }
+  setPhoto(headerDp, user.photoURL);
+  setPhoto(dpPreview, user.photoURL);
 
   if (fullNameInput) {
     fullNameInput.value = user.displayName || "";
   }
 
-  if (dpPreview) {
-    dpPreview.src = user.photoURL || DEFAULT_PHOTO;
-  }
-
+  // Check whether the user has an admin role.
   if (adminMenu) {
     adminMenu.style.display = "none";
 
-    const sheetUser = await fetchUserFromSheet(user.uid);
+    try {
+      const sheetUser = await fetchUserFromSheet(user.uid);
 
-    if (sheetUser?.role === "admin") {
-      adminMenu.style.display = "block";
+      if (sheetUser?.role === "admin") {
+        adminMenu.style.display = "block";
+      }
+    } catch (error) {
+      console.warn("Could not check admin role:", error);
     }
   }
 });
 
-// Preview selected profile picture
+// ======================================================
+// SELECT AND PREVIEW PHOTO
+// ======================================================
+
 if (dpInput) {
   dpInput.addEventListener("change", () => {
     const file = dpInput.files?.[0];
@@ -79,164 +153,267 @@ if (dpInput) {
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      showMessage("Please select a valid image.", true);
       dpInput.value = "";
+      showMessage("Please select an image file.", true);
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      showMessage("The image must be 5 MB or smaller.", true);
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp"
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
       dpInput.value = "";
+      showMessage(
+        "Choose a JPG, PNG, or WEBP image.",
+        true
+      );
       return;
     }
 
-    if (dpPreview) {
-      dpPreview.src = URL.createObjectURL(file);
+    if (file.size > MAX_FILE_SIZE) {
+      dpInput.value = "";
+      showMessage(
+        "Your photo is too large. Maximum size is 5 MB.",
+        true
+      );
+      return;
     }
 
-    showMessage("Photo selected. Remember to save your profile.");
+    // Release the previous preview URL.
+    if (previewObjectURL) {
+      URL.revokeObjectURL(previewObjectURL);
+    }
+
+    previewObjectURL = URL.createObjectURL(file);
+    setPhoto(dpPreview, previewObjectURL);
+
+    showMessage(
+      "Photo selected. Click Save Profile to upload it."
+    );
   });
 }
 
-// Upload an image to Cloudinary
-async function uploadProfilePhoto(file, uid) {
-  const endpoint =
-    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+// ======================================================
+// UPLOAD PHOTO TO CLOUDINARY
+// ======================================================
 
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-  formData.append("folder", "kfgc-profiles");
-  formData.append("public_id", `user_${uid}`);
-
-  if (uploadProgress) {
-    uploadProgress.style.display = "block";
-    uploadProgress.value = 0;
-  }
-
-  // XMLHttpRequest provides upload progress events.
+function uploadProfilePhoto(file, uid) {
   return new Promise((resolve, reject) => {
+    const endpoint =
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+
+    const formData = new FormData();
+
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    formData.append("folder", "kfgc-profiles");
+
+    // Use a stable public ID for each user's profile image.
+    formData.append("public_id", `user_${uid}`);
+
     const xhr = new XMLHttpRequest();
+    let completed = false;
+
+    function finishError(error) {
+      if (completed) return;
+
+      completed = true;
+      clearTimeout(timeoutId);
+      reject(error);
+    }
+
+    const timeoutId = setTimeout(() => {
+      xhr.abort();
+
+      finishError(
+        new Error(
+          "Photo upload timed out. Check your internet connection and Cloudinary settings."
+        )
+      );
+    }, UPLOAD_TIMEOUT);
 
     xhr.open("POST", endpoint);
+    xhr.timeout = UPLOAD_TIMEOUT;
 
     xhr.upload.addEventListener("progress", (event) => {
-      if (event.lengthComputable && uploadProgress) {
-        uploadProgress.value =
+      if (event.lengthComputable && !completed) {
+        const percentage =
           (event.loaded / event.total) * 100;
+
+        setProgress(percentage, true);
+
+        showMessage(
+          `Uploading photo: ${Math.round(percentage)}%`
+        );
       }
     });
 
     xhr.addEventListener("load", () => {
-      if (uploadProgress) {
-        uploadProgress.style.display = "none";
-      }
+      if (completed) return;
+
+      clearTimeout(timeoutId);
 
       let result;
 
       try {
         result = JSON.parse(xhr.responseText);
       } catch {
-        reject(new Error("Cloudinary returned an invalid response."));
+        finishError(
+          new Error("Cloudinary returned an invalid response.")
+        );
         return;
       }
 
-      if (xhr.status >= 200 && xhr.status < 300 && result.secure_url) {
+      if (
+        xhr.status >= 200 &&
+        xhr.status < 300 &&
+        result.secure_url
+      ) {
+        completed = true;
         resolve(result.secure_url);
-      } else {
-        reject(
-          new Error(
-            result.error?.message ||
-            `Cloudinary upload failed (HTTP ${xhr.status}).`
-          )
-        );
+        return;
       }
+
+      const cloudinaryError =
+        result.error?.message ||
+        `Upload failed with HTTP ${xhr.status}.`;
+
+      finishError(new Error(cloudinaryError));
     });
 
     xhr.addEventListener("error", () => {
-      if (uploadProgress) {
-        uploadProgress.style.display = "none";
-      }
+      finishError(
+        new Error(
+          "Network error. Check your internet connection and try again."
+        )
+      );
+    });
 
-      reject(new Error("Network error while uploading the photo."));
+    xhr.addEventListener("timeout", () => {
+      finishError(
+        new Error(
+          "Cloudinary took too long to respond. Please try again."
+        )
+      );
     });
 
     xhr.addEventListener("abort", () => {
-      if (uploadProgress) {
-        uploadProgress.style.display = "none";
+      if (!completed) {
+        finishError(new Error("Photo upload was cancelled."));
       }
-
-      reject(new Error("Photo upload was cancelled."));
     });
 
     xhr.send(formData);
   });
 }
 
-// Save profile changes
+// ======================================================
+// SAVE PROFILE
+// ======================================================
+
 if (profileForm) {
   profileForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    const user = auth.currentUser;
+    if (isSaving) return;
+
+    const user = auth.currentUser || currentUser;
 
     if (!user) {
-      showMessage("Please sign in again.", true);
+      showMessage(
+        "Your session has expired. Please sign in again.",
+        true
+      );
       return;
     }
 
     const newName = fullNameInput?.value.trim() || "";
-    const photoFile = dpInput?.files?.[0];
-    let photoURL = user.photoURL || "";
+    const photoFile = dpInput?.files?.[0] || null;
 
     if (!newName) {
       showMessage("Please enter your full name.", true);
+      fullNameInput?.focus();
       return;
     }
 
     if (newName.length > 100) {
-      showMessage("Your name must be 100 characters or fewer.", true);
+      showMessage(
+        "Your name must not exceed 100 characters.",
+        true
+      );
       return;
     }
 
-    const saveButton = profileForm.querySelector(
-      'button[type="submit"]'
-    );
-
-    if (saveButton) {
-      saveButton.disabled = true;
+    if (
+      photoFile &&
+      (
+        !["image/jpeg", "image/png", "image/webp"].includes(
+          photoFile.type
+        ) ||
+        photoFile.size > MAX_FILE_SIZE
+      )
+    ) {
+      showMessage(
+        "Choose a JPG, PNG, or WEBP image under 5 MB.",
+        true
+      );
+      return;
     }
 
-    showMessage("Saving your profile...");
+    setSavingState(true);
+    setProgress(0, false);
+    showMessage("Preparing to save your profile...");
 
     try {
-      // Upload the photo first, if one was selected.
+      let photoURL = user.photoURL || "";
+
+      // 1. Upload the selected photo, if any.
       if (photoFile) {
-        showMessage("Uploading your profile photo...");
-        photoURL = await uploadProfilePhoto(photoFile, user.uid);
+        showMessage("Connecting to Cloudinary...");
+        setProgress(0, true);
+
+        photoURL = await uploadProfilePhoto(
+          photoFile,
+          user.uid
+        );
       }
 
-      // Update Firebase Authentication profile.
+      // 2. Update Firebase Authentication profile.
+      showMessage("Updating your account...");
+
       await updateProfile(user, {
         displayName: newName,
         photoURL: photoURL || null
       });
 
-      // Update the page immediately.
+      // 3. Update the visible page.
       if (headerName) {
         headerName.textContent = newName;
       }
 
-      if (headerDp) {
-        headerDp.src = photoURL || DEFAULT_PHOTO;
+      setPhoto(headerDp, photoURL);
+      setPhoto(dpPreview, photoURL);
+
+      // 4. Clear the selected file and release preview URL.
+      if (dpInput) {
+        dpInput.value = "";
       }
 
-      if (dpPreview) {
-        dpPreview.src = photoURL || DEFAULT_PHOTO;
+      if (previewObjectURL) {
+        URL.revokeObjectURL(previewObjectURL);
+        previewObjectURL = null;
       }
 
-      // Update the Google Sheet separately.
-      // A Sheet failure should not undo a successful Firebase update.
+      setProgress(100, false);
+
+      // 5. Update Google Sheets separately.
+      // A Sheets error should not make a successful Firebase
+      // profile update appear to have failed.
+      showMessage("Profile saved. Updating member records...");
+
       try {
         await updateUserInSheet(
           user.uid,
@@ -245,62 +422,61 @@ if (profileForm) {
           photoURL
         );
       } catch (sheetError) {
-        console.error("Google Sheet update failed:", sheetError);
-      }
+        console.warn(
+          "Profile saved, but Google Sheets update failed:",
+          sheetError
+        );
 
-      if (dpInput) {
-        dpInput.value = "";
+        showMessage(
+          "Your profile was saved, but the member spreadsheet could not be updated."
+        );
+
+        return;
       }
 
       showMessage("Profile updated successfully!");
     } catch (error) {
       console.error("Profile save error:", error);
-      showMessage(error.message || "Could not save your profile.", true);
+
+      showMessage(
+        error?.message || "Could not save your profile. Please try again.",
+        true
+      );
     } finally {
-      if (saveButton) {
-        saveButton.disabled = false;
-      }
-
-      if (uploadProgress) {
-        uploadProgress.style.display = "none";
-      }
+      setSavingState(false);
+      setProgress(0, false);
     }
   });
 }
 
-// Logout
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", async () => {
-    try {
-      await signOut(auth);
-      window.location.replace("auth.html");
-    } catch (error) {
-      console.error("Logout error:", error);
-      showMessage("Unable to log out. Please try again.", true);
-    }
-  });
-}
+// ======================================================
+// GOOGLE SHEETS — FETCH USER
+// ======================================================
 
-// Fetch user data from Google Sheets
 async function fetchUserFromSheet(uid) {
-  try {
-    const response = await fetch(
-      `${SHEET_ENDPOINT}?uid=${encodeURIComponent(uid)}`
+  const response = await fetch(
+    `${SHEET_ENDPOINT}?uid=${encodeURIComponent(uid)}`
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Could not retrieve member information (HTTP ${response.status}).`
     );
-
-    if (!response.ok) {
-      throw new Error(`Google Sheet request failed: ${response.status}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Could not fetch user from Google Sheets:", error);
-    return null;
   }
+
+  return await response.json();
 }
 
-// Update user data in Google Sheets
-async function updateUserInSheet(uid, email, fullName, photoURL) {
+// ======================================================
+// GOOGLE SHEETS — UPDATE USER
+// ======================================================
+
+async function updateUserInSheet(
+  uid,
+  email,
+  fullName,
+  photoURL
+) {
   const response = await fetch(SHEET_ENDPOINT, {
     method: "POST",
     headers: {
@@ -316,8 +492,30 @@ async function updateUserInSheet(uid, email, fullName, photoURL) {
   });
 
   if (!response.ok) {
-    throw new Error("Google Sheets could not be updated.");
+    throw new Error(
+      `Google Sheets update failed (HTTP ${response.status}).`
+    );
   }
 
   return response;
-                                    }
+}
+
+// ======================================================
+// LOG OUT
+// ======================================================
+
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+      window.location.replace("auth.html");
+    } catch (error) {
+      console.error("Logout failed:", error);
+
+      showMessage(
+        "Unable to log out. Please try again.",
+        true
+      );
+    }
+  });
+  }
