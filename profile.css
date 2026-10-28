@@ -1,327 +1,205 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>KFGC Media App — Kirinda Full Gospel Church, Nyendo-Masaka City</title>
-  <script type="module" src="auth-guard.js"></script>
-<script type="module" src="bible.js"></script>
-<script type="module" src="notification.js"></script>
-  <!-- SEO -->
-  <meta name="robots" content="index, follow">
-  <meta name="googlebot" content="index, follow">
-  <link rel="canonical" href="https://kirindafullgospelchurchnyendo-rgb.github.io/kfgc-media-app/">
-  <meta name="description" content="Kirinda Full Gospel Church — sermons, events, prayer requests, and community resources.">
-<meta name="mobile-web-app-capable" content="yes">
-  <!-- Open Graph -->
-  <meta property="og:title" content="KFGC Media App — Kirinda Full Gospel Church">
-  <meta property="og:description" content="Sermons, live services, events, and community updates from Kirinda Full Gospel Church.">
-  <meta property="og:image" content="https://kirindafullgospelchurchnyendo-rgb.github.io/kfgc-media-app/share.jpg">
-  <meta property="og:url" content="https://kirindafullgospelchurchnyendo-rgb.github.io/kfgc-media-app/">
-  <meta property="og:type" content="website">
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="KFGC Media App — Kirinda Full Gospel Church">
-  <meta name="twitter:description" content="Sermons, live services, events, and community updates.">
-  <meta name="twitter:image" content="https://kirindafullgospelchurchnyendo-rgb.github.io/kfgc-media-app/share.jpg">
-
-  <!-- Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Church",
-    "name": "Kirinda Full Gospel Church",
-    "url": "https://prince-davidug.github.io/kfgc-media-app./",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Nyendo",
-      "addressRegion": "Masaka",
-      "addressCountry": "UG"
-    }
-  }
-  </script>
-
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="KFGC Media App">
-  <meta name="theme-color" content="#08203a">
-
-  <!-- Favicon -->
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <!-- Font Awesome -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="styles.css">
-<link rel="stylesheet" href="sty.css">
-<link rel="stylesheet" href="profile.css">
-
-  <script src="theme.js" defer></script>
-  <!-- Dark Mode Toggle & Initial Load -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const theme = localStorage.getItem('theme');
-      if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-        document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0e1624');
-      }
-
-      // Dark mode toggle
-      const toggleBtn = document.getElementById('theme-toggle');
-      toggleBtn?.addEventListener('click', () => {
-        document.documentElement.classList.toggle('dark');
-        const isDark = document.documentElement.classList.contains('dark');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        document.querySelector('meta[name="theme-color"]').setAttribute('content', isDark ? '#0e1624' : '#08203a');
-      });
-    });
-  </script>
-    <script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", async () => {
-    try {
-      const registration = await navigator.serviceWorker.register("./sw.js");
-
-      console.log(
-        "KFGC Service Worker registered:",
-        registration.scope
-      );
-
-    } catch (error) {
-      console.error(
-        "KFGC Service Worker registration failed:",
-        error
-      );
-    }
-  });
+/* KFGC MEDIA APP — Profile page styles
+   This file is profile-specific. Keep styles.css for the rest of the website. */
+:root {
+  --kfgc-navy: #071f3d;
+  --kfgc-navy-2: #0b3158;
+  --kfgc-orange: #f07824;
+  --kfgc-gold: #f4c46b;
+  --kfgc-purple: #7d1592;
+  --ink: #17263b;
+  --muted: #718096;
+  --line: #e4eaf2;
+  --surface: #ffffff;
+  --page-bg: #f4f7fb;
+  --shadow: 0 12px 35px rgba(8, 31, 61, .08);
 }
-</script>
- 
-</head>
-<body>
-  <body class="profile-page">
-  <header class="site-header">
-    <div class="header-inner">
-      <a href="index.html" class="brand" aria-label="KFGC Media App home">
-        <img src="kfgc.jpg" alt="KFGC Media App logo" class="logo">
-        <span class="brand-text">KFGC <strong>MEDIA APP</strong><small>Worship · Connect · Grow</small></span>
-      </a>
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body.profile-page { margin: 0; background: var(--page-bg); color: var(--ink); font-family: Inter, "Segoe UI", Arial, sans-serif; }
+.profile-page a { text-decoration: none; }
+.profile-page .site-header { position: sticky; top: 0; z-index: 50; background: var(--kfgc-navy); color: white; box-shadow: 0 4px 20px rgba(0,0,0,.13); }
+.profile-page .header-inner { width: min(1200px, calc(100% - 36px)); min-height: 82px; margin: auto; display: flex; align-items: center; gap: 24px; }
+.profile-page .brand { display: flex; align-items: center; gap: 12px; color: white; flex-shrink: 0; }
+.profile-page .logo { width: 52px; height: 52px; object-fit: contain; border-radius: 50%; background: white; border: 2px solid rgba(244,196,107,.8); }
+.profile-page .brand-text { font-weight: 800; font-size: 17px; line-height: 1.2; letter-spacing: .5px; }
+.profile-page .brand-text strong { display: block; color: var(--kfgc-gold); }
+.profile-page .brand-text small { display: block; font-size: 10px; font-weight: 500; letter-spacing: .2px; color: #d5dfec; margin-top: 4px; }
+.profile-page .primary-nav { flex: 1; }
+.profile-page .primary-nav ul { display: flex; align-items: center; justify-content: left; gap: 3px; list-style: none; margin: 0; padding: 0; }
+.profile-page .primary-nav a { display: inline-flex; gap: 7px; align-items: left; color: #e8eef7; padding: 11px 10px; border-radius: 9px; font-size: 12px; white-space: nowrap; background-size: 20px;}
+.profile-page .primary-nav a:hover, .profile-page .primary-nav a:focus-visible { background: rgba(255,255,255,.11); color: white; border-block-end-width: 20px }
+.profile-page .primary-nav a i { color: var(--kfgc-gold); }
+.profile-page .header-account { display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
+.profile-page .header-profile-link { display: flex; }
+.profile-page .header-avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid var(--kfgc-gold); background: #e9eef6; }
+.profile-page .header-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: white; font-size: 13px; font-weight: 650; }
+.profile-page .logout-button { border: 1px solid rgba(255,255,255,.28); background: rgba(255,255,255,.08); color: white; border-radius: 22px; padding: 10px 13px; cursor: pointer; font-weight: 700; font-size: 12px; }
+.profile-page .logout-button:hover { background: #a91d38; border-color: #a91d38; }
+.profile-page .mobile-menu-toggle { display: none; border: 1px solid rgba(255,255,255,.25); background: transparent; color: white; border-radius: 10px; padding: 9px 12px; font-size: 18px; }
+.profile-main { width: min(1200px, calc(100% - 36px)); margin: 26px auto 48px; }
+.profile-hero { position: relative; overflow: hidden; min-height: 250px; border-radius: 24px; color: white; background: radial-gradient(circle at 82% 10%, rgba(240,120,36,.42), transparent 28%), linear-gradient(120deg, #06172d, #0b3158 60%, #123f68); box-shadow: 0 18px 40px rgba(7,31,61,.18); }
+.profile-hero::before { content: ""; position: absolute; inset: 0; opacity: .16; background-image: url("kfgc.jpg"); background-repeat: no-repeat; background-position: 92% center; background-size: 290px; filter: grayscale(1); }
+.hero-image-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(5,20,40,.35), transparent 80%); }
+.hero-content { position: relative; display: flex; align-items: center; gap: 26px; padding: 34px 42px; min-height: 250px; }
+.hero-avatar-wrap { position: relative; flex-shrink: 0; }
+.hero-avatar { width: 132px; height: 132px; object-fit: cover; border-radius: 50%; border: 4px solid var(--kfgc-gold); outline: 4px solid rgba(255,255,255,.15); background: #e8eef5; }
+.member-status { position: absolute; bottom: 5px; right: 1px; display: grid; place-items: center; width: 34px; height: 34px; color: var(--kfgc-navy); background: var(--kfgc-gold); border: 3px solid #0a2b4d; border-radius: 50%; }
+.hero-copy { min-width: 0; }
+.eyebrow { margin: 0 0 8px; color: var(--kfgc-orange); font-size: 10px; font-weight: 850; letter-spacing: 1.4px; }
+.hero-copy .eyebrow { color: var(--kfgc-gold); }
+.hero-copy h1 { margin: 0 0 9px; font-size: clamp(27px, 4vw, 38px); line-height: 1.15; letter-spacing: -.7px; overflow-wrap: anywhere; }
+.hero-subtitle { margin: 0; color: #d8e3f0; font-size: 14px; }
+.hero-edit-link { display: inline-flex; gap: 8px; align-items: center; margin-top: 20px; padding: 10px 15px; color: white; border-radius: 22px; border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.08); font-size: 12px; font-weight: 700; }
+.hero-edit-link:hover { background: var(--kfgc-orange); border-color: var(--kfgc-orange); }
+.hero-badge { display: flex; align-items: center; gap: 10px; margin-left: auto; padding: 13px 17px; border: 1px solid rgba(244,196,107,.42); border-radius: 16px; background: rgba(3,17,35,.32); color: var(--kfgc-gold); font-size: 11px; font-weight: 750; line-height: 1.55; }
+.hero-badge i { font-size: 24px; }
+.profile-layout { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(270px, .85fr); gap: 24px; margin-top: 24px; align-items: start; }
+.profile-main-column, .profile-side-column { display: grid; gap: 22px; min-width: 0; }
+.panel { background: var(--surface); border: 1px solid #e9eef5; border-radius: 19px; padding: 25px; box-shadow: var(--shadow); }
+.panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 22px; }
+.panel-heading h2, .account-links h2 { margin: 0; font-size: 21px; color: var(--kfgc-navy); letter-spacing: -.3px; }
+.panel-heading .eyebrow { margin-bottom: 6px; }
+.heading-icon { display: grid; place-items: center; width: 43px; height: 43px; border-radius: 13px; color: var(--kfgc-orange); background: #fff1e7; font-size: 18px; }
+.completion-panel { background: linear-gradient(130deg, #fff, #f8fbff); }
+.completion-number { font-size: 23px; font-weight: 850; color: var(--kfgc-navy); }
+.progress-track { height: 10px; border-radius: 20px; overflow: hidden; background: #e7edf5; }
+.progress-fill { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #18a875, #72d6a6); transition: width .35s ease; }
+.muted { color: var(--muted); font-size: 13px; line-height: 1.65; }
+.completion-panel .muted { margin: 12px 0 0; }
+.profile-picture-editor { display: flex; align-items: center; gap: 20px; padding: 0 0 23px; margin-bottom: 23px; border-bottom: 1px solid var(--line); }
+.picture-preview-wrap { position: relative; flex-shrink: 0; }
+.picture-preview { display: block; width: 100px; height: 100px; border-radius: 50%; object-fit: cover; background: #edf2f8; border: 4px solid white; box-shadow: 0 0 0 2px var(--kfgc-gold), 0 7px 18px rgba(7,31,61,.12); }
+.camera-badge { position: absolute; right: -3px; bottom: 2px; display: grid; place-items: center; width: 31px; height: 31px; border-radius: 50%; background: var(--kfgc-orange); color: white; border: 3px solid white; font-size: 12px; }
+.picture-editor-copy h3 { margin: 0 0 4px; font-size: 15px; }
+.picture-editor-copy .muted { margin: 0 0 11px; }
+.upload-button { display: inline-flex; align-items: center; gap: 8px; padding: 9px 13px; border-radius: 9px; color: white; background: var(--kfgc-navy); cursor: pointer; font-size: 12px; font-weight: 750; }
+.upload-button:hover { background: var(--kfgc-orange); }
+.selected-file-name { display: block; margin-top: 7px; color: var(--muted); font-size: 11px; overflow-wrap: anywhere; }
+.form-field { margin-bottom: 18px; }
+.form-field > label { display: block; margin-bottom: 8px; color: #29394e; font-size: 13px; font-weight: 750; }
+.input-with-icon { display: flex; align-items: center; gap: 11px; min-height: 48px; padding: 0 14px; border: 1px solid #dce4ef; border-radius: 11px; background: #fbfcfe; transition: border-color .2s, box-shadow .2s; }
+.input-with-icon:focus-within { border-color: var(--kfgc-orange); box-shadow: 0 0 0 3px rgba(240,120,36,.12); }
+.input-with-icon > i { color: #8292a8; width: 17px; text-align: center; }
+.input-with-icon input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); font: inherit; font-size: 14px; padding: 13px 0; }
+.input-with-icon input::placeholder { color: #a0adbd; }
+.input-readonly { background: #f1f4f8; }
+.field-help { display: block; margin: 7px 0 0 2px; color: var(--muted); font-size: 11px; }
+.upload-progress { display: none; width: 100%; height: 8px; margin: 0 0 12px; accent-color: var(--kfgc-orange); }
+.form-message { min-height: 20px; margin: 0 0 9px; font-size: 13px; font-weight: 650; }
+.form-message.success { color: #16845d; }
+.form-message.error { color: #c12f42; }
+.form-message.info { color: var(--kfgc-navy-2); }
+.form-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.primary-button, .secondary-button, .outline-button { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 45px; padding: 12px 18px; border-radius: 11px; font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; transition: transform .15s, background .15s; }
+.primary-button { border: 0; color: white; background: linear-gradient(100deg, var(--kfgc-orange), #f28b25); box-shadow: 0 7px 15px rgba(240,120,36,.2); }
+.primary-button:hover { transform: translateY(-1px); background: #d96112; }
+.primary-button:disabled { opacity: .6; cursor: wait; transform: none; }
+.secondary-button { color: #44546a; background: white; border: 1px solid #dce4ef; }
+.secondary-button:hover { background: #f3f6fa; }
+.quick-actions-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.action-card { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 15px 12px; border: 1px solid var(--line); border-radius: 14px; background: #fff; color: var(--ink); transition: transform .18s, box-shadow .18s, border-color .18s; }
+.action-card:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(7,31,61,.08); border-color: #c9d6e7; }
+.action-icon { display: grid; place-items: center; flex-shrink: 0; width: 42px; height: 42px; border-radius: 12px; font-size: 17px; }
+.action-card > span:nth-child(2) { display: grid; gap: 4px; min-width: 0; }
+.action-card strong { font-size: 12px; line-height: 1.35; }
+.action-card small { color: var(--muted); font-size: 10px; line-height: 1.35; }
+.action-arrow { margin-left: auto; color: #9aa8b9; font-size: 11px; }
+.action-prayer .action-icon { color: #2868cc; background: #eaf2ff; }
+.action-testimonial .action-icon { color: #d66a13; background: #fff0e1; }
+.action-events .action-icon { color: #7b39cb; background: #f2eaff; }
+.action-sermons .action-icon { color: #087f91; background: #e1f7f8; }
+.action-giving .action-icon { color: #d73752; background: #fff0f2; }
+.action-settings .action-icon { color: #13845e; background: #e7f8f0; }
+.member-card { text-align: center; padding: 29px 24px; }
+.member-card-icon { display: grid; place-items: center; width: 58px; height: 58px; margin: 0 auto 18px; border-radius: 18px; background: var(--kfgc-navy); color: var(--kfgc-gold); font-size: 24px; }
+.member-card h2 { margin: 0; color: var(--kfgc-navy); font-size: 20px; line-height: 1.35; }
+.member-card .muted { margin: 10px 0 19px; }
+.outline-button { border: 1px solid #dce4ef; color: var(--kfgc-navy); background: white; }
+.outline-button:hover { border-color: var(--kfgc-orange); color: #bd520e; }
+.verse-card { position: relative; overflow: hidden; padding: 27px 25px; border-radius: 19px; color: white; background: linear-gradient(145deg, #071f3d, #104875); box-shadow: var(--shadow); }
+.verse-card::after { content: "✝"; position: absolute; right: 12px; bottom: -37px; font-size: 150px; color: rgba(255,255,255,.055); font-family: Georgia, serif; }
+.verse-icon { color: var(--kfgc-gold); font-size: 23px; }
+.verse-label { margin: 13px 0 10px; color: var(--kfgc-gold); font-size: 9px; font-weight: 850; letter-spacing: 1.3px; }
+.verse-card blockquote { position: relative; z-index: 1; margin: 0; font: 600 17px/1.6 Georgia, serif; }
+.verse-card cite { display: block; margin-top: 14px; color: var(--kfgc-gold); font-size: 12px; font-style: normal; font-weight: 800; }
+.account-links h2 { margin-bottom: 14px; font-size: 18px; }
+.account-links a { display: flex; align-items: center; gap: 11px; padding: 13px 0; color: #34445a; font-size: 12px; border-top: 1px solid #edf1f6; }
+.account-links a > i:first-child { color: var(--kfgc-orange); width: 18px; text-align: center; font-size: 15px; }
+.account-links a > span { flex: 1; }
+.account-links a > i:last-child { color: #9aa8b9; font-size: 10px; }
+.account-links a:hover { color: var(--kfgc-orange); }
+.profile-page .profile-footer { background: var(--kfgc-navy); color: #e7edf6; margin-top: 0; }
+.profile-page .profile-footer .footer-inner { width: min(1200px, calc(100% - 36px)); margin: auto; padding: 31px 0; display: grid; grid-template-columns: 1fr 1.5fr 1fr; align-items: center; gap: 18px; }
+.profile-footer .footer-terms { color: var(--kfgc-gold); font-size: 13px; }
+.profile-footer .footer-center { text-align: center; }
+.profile-footer .footer-center p { margin: 0 0 12px; font-size: 13px; }
+.profile-footer .social { display: flex; justify-content: center; flex-wrap: wrap; gap: 9px; }
+.profile-footer .social a { display: grid; place-items: center; width: 35px; height: 35px; border-radius: 50%; background: white; overflow: hidden; }
+.profile-footer .social img { width: 100%; height: 100%; object-fit: contain; }
+.profile-footer .footer-copyright { margin: 0; text-align: right; color: #c8d3e1; font-size: 11px; line-height: 1.6; }
+@media (max-width: 1050px) {
+  .profile-page .header-inner { gap: 13px; }
+  .profile-page .primary-nav a { padding: 10px 7px; font-size: 11px; }
+  .profile-page .brand-text { font-size: 14px; }
+  .profile-page .logo { width: 45px; height: 45px; }
+  .profile-page .header-name { max-width: 90px; }
+}
+@media (max-width: 850px) {
+  .profile-page .header-inner { min-height: 72px; flex-wrap: wrap; padding: 10px 0; }
+  .profile-page .mobile-menu-toggle { display: block; margin-left: auto; order: 2; }
+  .profile-page .header-account { order: 3; }
+  .profile-page .primary-nav { display: none; flex: 0 0 100%; order: 4; }
+  .profile-page .primary-nav.nav-open { display: block; }
+  .profile-page .primary-nav ul { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); padding: 8px 0 3px; }
+  .profile-page .primary-nav a { width: 100%; font-size: 12px; }
+  .profile-layout { grid-template-columns: 1fr; }
+  .profile-side-column { grid-template-columns: repeat(2, minmax(0,1fr)); align-items: start; }
+  .account-links { grid-column: 1 / -1; }
+  .profile-page .profile-footer .footer-inner { grid-template-columns: 1fr; text-align: center; }
+  .profile-footer .footer-copyright { text-align: center; }
+}
+@media (max-width: 560px) {
+  .profile-page .header-inner, .profile-main, .profile-page .profile-footer .footer-inner { width: min(100% - 22px, 1200px); }
+  .profile-page .brand { gap: 8px; }
+  .profile-page .logo { width: 39px; height: 39px; }
+  .profile-page .brand-text { font-size: 12px; }
+  .profile-page .brand-text small { font-size: 9px; }
+  .profile-page .header-name { display: none; }
+  .profile-page .header-avatar { width: 34px; height: 34px; }
+  .profile-page .logout-button { padding: 9px 10px; }
+  .profile-page .logout-button span { display: none; }
+  .profile-hero { min-height: 0; border-radius: 18px; }
+  .hero-content { min-height: 0; padding: 27px 20px; gap: 15px; align-items: flex-start; }
+  .hero-avatar { width: 82px; height: 82px; border-width: 3px; outline-width: 2px; }
+  .member-status { width: 26px; height: 26px; font-size: 11px; border-width: 2px; }
+  .hero-copy .eyebrow { font-size: 8px; letter-spacing: .8px; }
+  .hero-copy h1 { font-size: 22px; }
+  .hero-subtitle { font-size: 11px; line-height: 1.5; }
+  .hero-edit-link { margin-top: 13px; padding: 8px 11px; font-size: 11px; }
+  .hero-badge { display: none; }
+  .profile-main { margin-top: 13px; margin-bottom: 28px; }
+  .profile-layout { gap: 14px; margin-top: 14px; }
+  .profile-main-column, .profile-side-column { gap: 14px; }
+  .panel { padding: 19px 16px; border-radius: 16px; }
+  .panel-heading { margin-bottom: 17px; }
+  .panel-heading h2 { font-size: 19px; }
+  .completion-number { font-size: 20px; }
+  .profile-picture-editor { gap: 14px; }
+  .picture-preview { width: 78px; height: 78px; }
+  .picture-editor-copy h3 { font-size: 13px; }
+  .picture-editor-copy .muted { font-size: 11px; line-height: 1.45; }
+  .upload-button { padding: 8px 10px; font-size: 11px; }
+  .quick-actions-grid { grid-template-columns: 1fr; gap: 9px; }
+  .action-card { padding: 12px; }
+  .profile-side-column { grid-template-columns: 1fr; }
+  .account-links { grid-column: auto; }
+  .member-card { padding: 24px 19px; }
+  .verse-card { padding: 23px 20px; }
+  .form-actions > button { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+}
 
-      <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
-        <i class="fa-solid fa-bars"></i>
-      </button>
 
-      <nav id="primary-nav" class="primary-nav">
-        <ul>
-            <li><a href="about-us.html"><i class="fa-solid fa-church"></i> About Us</a></li>
-          <li><a href="services.html"><i class="fa-solid fa-hands-praying"></i> Services</a></li>
-          <li><a href="sermons.html"><i class="fa-solid fa-tower-broadcast"></i> Sermons</a></li>
-          <li><a href="audio.html"><i class="fa-solid fa-headset"></i> Audio Sermons</a></li>
-          <li><a href="events.html"><i class="fa-solid fa-calendar-days"></i> Events</a></li>
-          <li><a href="testimonials.html"><i class="fa-solid fa-comment-dots"></i> Testimonials</a></li>
-          <li><a href="donate.html"><i class="fa-solid fa-heart"></i> Donate</a></li>
-          <li><a href="contact-us.html"><i class="fa-solid fa-phone"></i> Contact Us</a></li>
-          <li><a href="download-app.html"><i class="fa-solid fa-download"></i> Download App</a></li>
-          <li><a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a></li>
-          <li><a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a></li>
-          <li><a href="notifications.html"><i class="fa-solid fa-bell"></i> Notifications</a></li>
-         </ul>
-      </nav>
-
-      <div class="header-account">
-        <a href="profile.html" class="header-profile-link" aria-label="Open profile">
-          <img id="headerDp" src="user.jpg" alt="" class="header-avatar">
-        </a>
-   </div>
-    </div>
-  </header>
-
-
-  <!-- Hero Slider -->
-  <div class="hero">
-    <div class="hero-overlay"></div>
-    <div class="hero-inner">
-      <section class="slider" aria-roledescription="carousel" aria-label="Ministry highlights">
-        <div class="slides" role="region" aria-live="polite">
-          <article class="slide" data-index="0">
-            <img src="grow.jpg" alt="Grow in faith and community" loading="lazy">
-            <h2>Grow in Faith & Community</h2>
-            <p>Join a thriving community, strengthen your faith, and connect with others on your spiritual journey.</p>
-          </article>
-
-          <article class="slide" data-index="1">
-            <img src="worship.jpg" alt="Worship together" loading="lazy">
-            <h2>Worship Together</h2>
-            <p>Experience powerful worship sessions and draw closer to God through collective praise.</p>
-          </article>
-
-          <article class="slide" data-index="2">
-            <img src="bible.jpg" alt="Bible study and prayer" loading="lazy">
-            <h2>Bible Study & Prayer</h2>
-            <p>Deepen your understanding of scripture and stay spiritually connected through daily prayers.</p>
-          </article>
-
-          <article class="slide" data-index="3">
-            <img src="youths-ministry.jpg" alt="Youths ministry" loading="lazy">
-            <h2>Youth Ministry</h2>
-            <p>Programs and fellowship tailored for young people — grow, serve and lead.</p>
-          </article>
-
-          <article class="slide" data-index="4">
-            <img src="children.jpg" alt="Children ministry" loading="lazy">
-            <h2>Children's Ministry</h2>
-            <p>Safe, fun and biblical activities for children to learn about Jesus.</p>
-          </article>
-
-          <article class="slide" data-index="5">
-            <img src="praise.jpg" alt="Praise and worship ministry" loading="lazy">
-            <h2>Praise & Worship</h2>
-            <p>Music teams and rehearsals — using worship to lift hearts to God.</p>
-          </article>
-
-          <article class="slide" data-index="6">
-            <img src="women.jpg" alt="Women's ministry" loading="lazy">
-            <h2>Women's Ministry</h2>
-            <p>Support, discipleship and events designed for women.</p>
-          </article>
-
-          <article class="slide" data-index="7">
-            <img src="evangelism.jpg" alt="Evangelism ministry" loading="lazy">
-            <h2>Evangelism</h2>
-            <p>Outreach programs that bring the good news into our communities.</p>
-          </article>
-        </div>    
-        <div>
-        </div>
-        <div class="controls">
-          <button class="prev" aria-label="Previous slide"><i class="fa fa-chevron-left"></i></button>
-          <div class="dots" role="tablist" aria-label="Slide navigation"></div>
-          <button class="next" aria-label="Next slide"><i class="fa fa-chevron-right"></i></button>
-        </div>
-      </section>
-    </div>
-  </div>
-  
-  <!-- Main CTA -->
-  <main class="main-content">
-    <section class="cta">
-      <h2>DAILY BIBLE VERSE</h2>
-       <div class="cta-actions">
-         <a class="btn outline" href="bible.html">Open Bible</a>
-    
-        </div>
-  </div>
-    </section>
-  <div class="msg" id="msg"></div>
-  
-  <!-- Search Box -->
-  <div class="search-box">
-    <input type="text" id="searchInput" placeholder="Enter book chapter:verse e.g., John 3:16">
-    <button id="searchBtn">Search</button>
-  </div>
-  <!-- Verse of the Day -->
-  <div class="verse-container">
-    <span class="verse-ref" id="dailyRef">Verse of the Day</span>
-    <span class="verse-text" id="dailyText">Loading...</span>
-            
-    <div class="cta-actions">
-      <a class="btn" href="bible.html">full chapter</a>
-      </div>
-  </div>
-
-</main>
-  
-  <main class="main-items">
-    <section class="ctap">
-      <h3>Join us this Sunday</h3>
-      <p>Come for worship, stay for community. See our events page for details on times and special meetings.</p>
-      <div class="ctap-actions">
-        <a class="btnp" href="events.html">View Events</a>
-        <a class="btnp outline" href="sermons.html">Watch Live</a>
-      </div>
-    </section>
-  
-  </br>
-    <main class="main-church">
-    <section class="ctay">
-      <h3>Listen to audio sermons</h3>
-      <p>Catch up with us through listening to previous, latest and live sermons from God's great men and women.</p>
-      <div class="ctay-actions">
-        <a class="btny" href="audio.html">All Sermons</a>
-        <a class="btny outline" href="sermons.html">Listen Live</a>
-      </div>
-    </section>
-      </br>
-   
-      <div class="box">
-  <img src="sunday.jpg">
-  <h3>Sunday Worship Service</h3>
-  <p>Join us every Sunday for worship, prayer, and the Word of God.</p>
-  <p><strong>Time:</strong> 9:00 AM – 7:00 PM</p>
-  <a href="sermons.html" class="btn">Join Us</a>
-</div>
-      <div class="advert-box">
-         <h3> WHAT YOU SHOULDN'T MISS!! </h3>
-          <img src="sunday.jpg">
-        <h5>Youths leading in praise and worship </p5>
-        <p>We are going be led by our church youths through the praise and worship session</p>
-        <a href="events.html" class="btn">See Date</a>
-      </div> 
-  
-  
-</main>
-
-  <!-- Footer -->
-  <footer class="site-footer">
-    <p> Follow Us On:</p>
-  <div class="footer-center">
-        <nav class="social">
-          <a href="https://whatsapp.com/channel/0029VaoQRhnHwXb9FX0Ub503" target="_blank" rel="noopener">
-            <img src="whatsapp.jpg" alt="WhatsApp" loading="lazy">
-          </a>
-          <a href="https://www.youtube.com/@KIRINDAFULLGOSPELCHURCHNYENDO" target="_blank" rel="noopener">
-            <img src="youtube-icon.png" alt="YouTube" loading="lazy">
-          </a>
-          <a href="https://www.tiktok.com/@kirindafullgospel" target="_blank" rel="noopener">
-            <img src="tiktok.png" alt="TikTok" loading="lazy">
-          </a>
-          <a href="https://www.facebook.com/profile.php?id=61579066273777" target="_blank" rel="noopener">
-            <img src="facebook.png" alt="Facebook" loading="lazy">
-          </a>
-          <a href="https://t.me/+wJRnn7SQvehhZTFk" target="_blank" rel="noopener">
-            <img src="telegram.jpg" alt="Telegram" loading="lazy">
-          </a>
-          <a href="https://kirindafullgospelchurchnyendo-rgb.github.io/kfgc-media-app/" target="_blank" rel="noopener">
-            <img src="share.jpg" alt="App" loading="lazy">
-          </a>
-          <a href="https://maps.app.goo.gl/v8nPT1WvCGwSKiQF9" target="_blank" rel="noopener">
-            <img src="location.jpg" alt="Location" loading="lazy">
-          </a>
-        </nav>
-      </div>
-      <div class="footer-right">
-        <p>&copy; 2026 KFGC MEDIA APP. All Rights Reserved.</p>
-      </div>
-    </div>
-  </footer>
-    
-    <script type="module" src="header.js"></script>
-  <script type="module" src="profile.js"></script>
-  <script>
-    const menuToggle = document.getElementById('mobileMenuToggle');
-    const nav = document.getElementById('primary-nav');
-    if (menuToggle && nav) {
-      menuToggle.addEventListener('click', () => {
-        const isOpen = nav.classList.toggle('nav-open');
-        menuToggle.setAttribute('aria-expanded', String(isOpen));
-        menuToggle.innerHTML = isOpen ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-bars"></i>';
-      });
-    }
-  </script>
-</body>
-</html>
-  
+                              
