@@ -454,52 +454,89 @@ if (profileForm) {
 // ======================================================
 
 async function fetchUserFromSheet(uid) {
-  const response = await fetch(
-    `${SHEET_ENDPOINT}?uid=${encodeURIComponent(uid)}`
-  );
+const user = auth.currentUser;
 
-  if (!response.ok) {
-    throw new Error(
-      `Could not retrieve member information (HTTP ${response.status}).`
-    );
-  }
-
-  return await response.json();
+if (!user) {
+throw new Error("Please sign in to view your profile.");
 }
 
+if (user.uid !== uid) {
+throw new Error("You can only access your own profile.");
+}
+
+const idToken = await user.getIdToken();
+
+const response = await fetch(
+"${SHEET_ENDPOINT}?uid=${encodeURIComponent(uid)}&idToken=${encodeURIComponent(idToken)}"
+);
+
+if (!response.ok) {
+throw new Error(
+"Could not retrieve member information (HTTP ${response.status})."
+);
+}
+
+const result = await response.json();
+
+if (!result.success) {
+throw new Error(result.message || "Could not retrieve your profile.");
+}
+
+return result;
+}
 // ======================================================
 // GOOGLE SHEETS — UPDATE USER
 // ======================================================
 
 async function updateUserInSheet(
-  uid,
-  email,
-  fullName,
-  photoURL
+uid,
+email,
+fullName,
+photoURL
 ) {
-  const response = await fetch(SHEET_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8"
-    },
-    body: JSON.stringify({
-      uid,
-      email,
-      fullName,
-      photoURL,
-      action: "update"
-    })
-  });
+const user = auth.currentUser;
 
-  if (!response.ok) {
-    throw new Error(
-      `Google Sheets update failed (HTTP ${response.status}).`
-    );
-  }
-
-  return response;
+if (!user) {
+throw new Error("Please sign in before updating your profile.");
 }
 
+if (user.uid !== uid) {
+throw new Error("You can only update your own profile.");
+}
+
+const idToken = await user.getIdToken();
+
+const response = await fetch(SHEET_ENDPOINT, {
+method: "POST",
+headers: {
+"Content-Type": "text/plain;charset=utf-8"
+},
+body: JSON.stringify({
+uid,
+idToken,
+email,
+fullName,
+photoURL,
+action: "update"
+})
+});
+
+if (!response.ok) {
+throw new Error(
+"Google Sheets update failed (HTTP ${response.status})."
+);
+}
+
+const result = await response.json();
+
+if (!result.success) {
+throw new Error(
+result.message || "Could not update your member details."
+);
+}
+
+return result;
+}
 // ======================================================
 // LOG OUT
 // ======================================================
