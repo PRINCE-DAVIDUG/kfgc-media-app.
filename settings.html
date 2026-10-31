@@ -488,6 +488,105 @@ body.font-lg { font-size: 18px; }
 .card:active {
   transform: scale(0.98);
 }
+
+  /* =====================================
+   KFGC MODERN APPEARANCE SELECTOR
+===================================== */
+
+:root {
+  --kfgc-orange: #E75C26;
+  --kfgc-navy: #08203a;
+}
+
+/* Theme selection card */
+.theme-card {
+  background: var(--card-bg);
+  padding: 16px;
+  border-radius: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+}
+
+.theme-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.theme-option {
+  position: relative;
+  min-height: 90px;
+  border: 1.5px solid var(--border);
+  border-radius: 13px;
+  background: transparent;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: 0.2s ease;
+}
+
+.theme-option > i:first-child {
+  font-size: 1.35rem;
+  color: var(--kfgc-orange);
+}
+
+.theme-option.selected {
+  border: 2px solid var(--kfgc-orange);
+  background: rgba(231,92,38,0.09);
+  font-weight: 700;
+}
+
+.selected-icon {
+  display: none;
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  color: var(--kfgc-orange);
+  font-size: 0.85rem;
+}
+
+.theme-option.selected .selected-icon {
+  display: block;
+}
+
+/* Dark theme */
+body.dark .theme-card {
+  background: #141f33;
+  color: #fff;
+}
+
+body.dark .theme-option {
+  border-color: #34435a;
+}
+
+body.dark .theme-option.selected {
+  background: rgba(231,92,38,0.16);
+  border-color: var(--kfgc-orange);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 360px) {
+  .theme-options {
+    gap: 6px;
+  }
+
+  .theme-option {
+    min-height: 82px;
+    font-size: 0.75rem;
+  }
+  }
 </style>
 <script>
 
