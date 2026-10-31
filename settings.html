@@ -30,7 +30,25 @@
 
   <!-- ========== MAIN CONTAINER ========== -->
   <main class="container" role="main">
+<!-- PREMIUM WELCOME BANNER -->
+<section class="settings-welcome">
+  <div class="welcome-content">
+    <span class="welcome-tag">
+      <i class="fas fa-cog"></i> APP PREFERENCES
+    </span>
 
+    <h2>Settings & Preferences</h2>
+
+    <p>
+      Personalize your KFGC Media App experience.
+      Manage your account, appearance and preferences.
+    </p>
+  </div>
+
+  <div class="welcome-icon">
+    <i class="fas fa-sliders"></i>
+  </div>
+</section>
     <!-- GENERAL -->
     <div class="section-label">General</div>
 
@@ -585,6 +603,236 @@ body.dark .theme-option.selected {
   .theme-option {
     min-height: 82px;
     font-size: 0.75rem;
+  }
+  }
+
+  /* =========================================
+   KFGC PREMIUM SETTINGS DASHBOARD
+========================================= */
+
+:root {
+  --primary: #E75C26;
+  --navy: #08203a;
+  --page-bg: #f3f5f9;
+  --surface: #ffffff;
+  --text: #172337;
+  --muted: #7b8493;
+  --line: #e8ebf0;
+}
+
+/* Main background */
+body {
+  background: var(--page-bg);
+  color: var(--text);
+  transition: background .3s ease, color .3s ease;
+}
+
+/* Premium header */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 16px 18px;
+  background: linear-gradient(120deg, #08203a, #123b60);
+  box-shadow: 0 4px 15px rgba(0,0,0,.12);
+}
+
+.logo {
+  width: 43px;
+  height: 43px;
+  border: 2px solid rgba(255,255,255,.7);
+}
+
+.title {
+  font-size: 1.2rem;
+  letter-spacing: .3px;
+}
+
+/* Main content */
+.container {
+  max-width: 760px;
+  margin: auto;
+  padding: 18px 16px 100px;
+}
+
+/* Section headings */
+.section-label {
+  margin: 25px 5px 12px;
+  color: var(--primary);
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+/* Premium cards */
+.card,
+.theme-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 14px rgba(20,35,55,.045);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.card:hover,
+.theme-card:hover {
+  box-shadow: 0 7px 20px rgba(20,35,55,.09);
+}
+
+.card:active {
+  transform: scale(.985);
+}
+
+/* Colourful icon backgrounds */
+.icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(
+    135deg,
+    rgba(231,92,38,.16),
+    rgba(231,92,38,.05)
+  );
+  color: var(--primary);
+  font-size: 1.15rem;
+}
+
+/* Card typography */
+.card-title {
+  font-size: .96rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.card-sub {
+  margin-top: 4px;
+  font-size: .79rem;
+  color: var(--muted);
+}
+
+/* Live service button */
+.toggle {
+  background: var(--primary);
+  color: white;
+  border-radius: 9px;
+  padding: 9px 12px;
+  font-weight: 600;
+}
+
+/* Font size buttons */
+.size-btn {
+  min-width: 35px;
+  min-height: 34px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  color: var(--text);
+}
+
+.size-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+/* Premium bottom navigation */
+.footer {
+  height: 70px;
+  z-index: 100;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -4px 18px rgba(0,0,0,.05);
+}
+
+.nav-link {
+  gap: 5px;
+  font-weight: 600;
+  transition: .2s ease;
+}
+
+.nav-link.active {
+  color: var(--primary);
+}
+
+.nav-link.active i {
+  transform: translateY(-2px);
+}
+
+/* Modal */
+.modal-backdrop {
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modal {
+  color: var(--text);
+  background: var(--surface);
+  border-radius: 20px;
+  box-shadow: 0 15px 45px rgba(0,0,0,.2);
+  animation: modalEnter .25s ease;
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Dark mode */
+body.dark {
+  --page-bg: #0b1422;
+  --surface: #141f30;
+  --text: #f1f4f9;
+  --muted: #a3afc0;
+  --line: #29384d;
+  background: var(--page-bg);
+  color: var(--text);
+}
+
+body.dark .card,
+body.dark .theme-card {
+  background: var(--surface);
+  border-color: var(--line);
+}
+
+body.dark .card-title,
+body.dark .modal {
+  color: var(--text);
+}
+
+body.dark .footer {
+  background: var(--surface);
+  border-color: var(--line);
+}
+
+body.dark .modal {
+  background: var(--surface);
+}
+
+body.dark .btn.ghost {
+  color: var(--text);
+  border-color: var(--line);
+}
+
+/* Small screens */
+@media(max-width: 480px) {
+  .container {
+    padding-left: 13px;
+    padding-right: 13px;
+  }
+
+  .card {
+    padding: 13px;
+  }
+
+  .card-sub {
+    font-size: .75rem;
   }
   }
 </style>
