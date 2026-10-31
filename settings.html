@@ -87,7 +87,56 @@
       </div>
       <div class="card-right"><i class="fa fa-angle-right"></i></div>
     </div>
+<!-- NOTIFICATION PREFERENCES -->
+<div class="section-label">Notifications</div>
 
+<div class="card notification-card">
+  <div class="card-info">
+    <div class="icon-wrap">
+      <i class="fas fa-bell"></i>
+    </div>
+    <div>
+      <div class="card-title">Notification Preferences</div>
+      <div class="card-sub">Choose which church updates you receive.</div>
+    </div>
+  </div>
+
+  <div class="notification-options">
+
+    <label class="notification-option">
+      <div>
+        <strong>Church Announcements</strong>
+        <small>Important church news and updates.</small>
+      </div>
+      <input type="checkbox" class="notification-toggle" data-notification="announcements" checked>
+    </label>
+
+    <label class="notification-option">
+      <div>
+        <strong>Church Events</strong>
+        <small>Upcoming services and activities.</small>
+      </div>
+      <input type="checkbox" class="notification-toggle" data-notification="events" checked>
+    </label>
+
+    <label class="notification-option">
+      <div>
+        <strong>New Sermons</strong>
+        <small>Notifications about newly uploaded sermons.</small>
+      </div>
+      <input type="checkbox" class="notification-toggle" data-notification="sermons" checked>
+    </label>
+
+    <label class="notification-option">
+      <div>
+        <strong>Prayer Updates</strong>
+        <small>Updates about prayer activities.</small>
+      </div>
+      <input type="checkbox" class="notification-toggle" data-notification="prayers" checked>
+    </label>
+
+  </div>
+  </div>
     <!-- APPEARANCE -->
     <div class="section-label">Appearance</div>
 
@@ -1065,6 +1114,81 @@ body.dark .btn.ghost {
     animation-duration: .01ms !important;
     transition-duration: .01ms !important;
   }
+}
+
+  /* =====================================
+   NOTIFICATION PREFERENCES
+===================================== */
+
+.notification-card {
+  padding: 16px;
+}
+
+.notification-options {
+  margin-top: 15px;
+}
+
+.notification-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+  cursor: pointer;
+}
+
+.notification-option strong {
+  display: block;
+  color: var(--text);
+  font-size: .88rem;
+  margin-bottom: 4px;
+}
+
+.notification-option small {
+  display: block;
+  color: var(--muted);
+  font-size: .75rem;
+  line-height: 1.4;
+}
+
+.notification-toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex-shrink: 0;
+  width: 46px;
+  height: 25px;
+  border-radius: 20px;
+  background: #c7cdd5;
+  cursor: pointer;
+  transition: background .25s ease;
+}
+
+.notification-toggle::before {
+  content: "";
+  position: absolute;
+  width: 19px;
+  height: 19px;
+  left: 3px;
+  top: 3px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0,0,0,.2);
+  transition: transform .25s ease;
+}
+
+.notification-toggle:checked {
+  background: var(--primary);
+}
+
+.notification-toggle:checked::before {
+  transform: translateX(21px);
+}
+
+.notification-toggle:focus-visible {
+  outline: 3px solid rgba(231,92,38,.3);
+  outline-offset: 3px;
 }
 </style>
 <script>
