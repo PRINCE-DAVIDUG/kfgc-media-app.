@@ -19,9 +19,7 @@ import {
 const CLOUDINARY_CLOUD_NAME = "dvnyyq3ru";
 const CLOUDINARY_UPLOAD_PRESET = "kfgc_profiles";
 
-const SHEET_ENDPOINT =
-  "https://script.google.com/macros/s/AKfycbx__CHeBV6cEkMycG85Nn-ThWkW0SJIHTRhwXNnyjutTZ4r0gCSs4EVDtFiCt0MFuPx/exec";
-
+const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbxVjf_bMpqGEEqC39CQX5mg15EvU5P3KTP1UE-S7nDJ18pGZFyXqDj4AJuKxCVw9you/exec";
 const DEFAULT_PHOTO = "user.jpg";
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const UPLOAD_TIMEOUT = 60000;
