@@ -27,54 +27,79 @@ const qsa = (sel) => Array.from(document.querySelectorAll(sel));
   }
 
 
-/* ---------- UNIFIED THEME SYSTEM (Works on ALL Pages) ---------- */
-const themeBtn = qs('#theme-toggle');
-const THEME_KEY = 'kfgc_theme';
+/* =========================================
+   KFGC UNIFIED THEME SYSTEM
+   Light | Dark | System
+========================================= */
 
-// Apply saved theme on page load
-function applyThemeOnLoad() {
-  const saved = localStorage.getItem(THEME_KEY);
+const KFGC_THEME_KEY = 'kfgc_theme';
 
-  if (saved === 'dark') {
-    document.body.classList.add('dark');
-  } else {
-    document.body.classList.add('light'); // default
-  }
+const themeButtons = [
+  document.getElementById('theme-toggle'),
+  document.getElementById('themeToggleBtn'),
+  document.getElementById('theme-card-btn')
+].filter(Boolean);
 
-  updateThemeIcon();
+const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+
+function applyKfgcTheme(theme) {
+  const selectedTheme = ['light', 'dark', 'system'].includes(theme)
+    ? theme
+    : 'system';
+
+  localStorage.setItem(KFGC_THEME_KEY, selectedTheme);
+
+  const darkMode = selectedTheme === 'dark' ||
+    (selectedTheme === 'system' && systemTheme.matches);
+
+  document.body.classList.toggle('dark', darkMode);
+  document.body.classList.toggle('navy', darkMode);
+  document.body.classList.toggle('light', !darkMode);
+
+  document.documentElement.dataset.theme = darkMode ? 'dark' : 'light';
+  document.documentElement.style.colorScheme = darkMode ? 'dark' : 'light';
+
+  updateKfgcThemeIcons();
+
+  window.dispatchEvent(new CustomEvent('kfgc-theme-changed', {
+    detail: { theme: selectedTheme, darkMode }
+  }));
 }
 
-applyThemeOnLoad();
+function updateKfgcThemeIcons() {
+  const darkMode = document.body.classList.contains('dark');
 
-// Click handler
-if (themeBtn) {
-  themeBtn.addEventListener('click', () => {
-    const isDark = document.body.classList.contains('dark');
+  themeButtons.forEach(button => {
+    button.innerHTML = darkMode
+      ? '<i class="fas fa-moon"></i>'
+      : '<i class="fas fa-sun"></i>';
 
-    if (isDark) {
-      document.body.classList.replace('dark', 'light');
-      localStorage.setItem(THEME_KEY, 'light');
-    } else {
-      document.body.classList.replace('light', 'dark');
-      localStorage.setItem(THEME_KEY, 'dark');
-    }
-
-    updateThemeIcon();
+    button.setAttribute('aria-pressed', String(darkMode));
   });
 }
 
-// Update moon/sun icon
-function updateThemeIcon() {
-  if (!themeBtn) return;
+// Initialize saved theme
+applyKfgcTheme(localStorage.getItem(KFGC_THEME_KEY) || 'system');
 
-  if (document.body.classList.contains('dark')) {
-    themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
-    themeBtn.setAttribute('aria-pressed', 'true');
-  } else {
-    themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
-    themeBtn.setAttribute('aria-pressed', 'false');
+// Header and card theme buttons
+themeButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    const currentlyDark = document.body.classList.contains('dark');
+    applyKfgcTheme(currentlyDark ? 'light' : 'dark');
+  });
+});
+
+// Follow device changes when System Default is selected
+systemTheme.addEventListener('change', () => {
+  if (localStorage.getItem(KFGC_THEME_KEY) === 'system') {
+    applyKfgcTheme('system');
   }
-}
+});
+
+// Allow other pages to change the theme
+window.applyKfgcTheme = applyKfgcTheme;
+
+
 
 /* ---------- Slider (auto + manual) ---------- */
 const slidesContainer = qs('.slides');
@@ -192,36 +217,6 @@ document.querySelectorAll('.nav-link').forEach(a=>{
   }
 });
 
-/* --- Theme handling (start in light mode per user request) --- */
-const themeToggleBtn = document.getElementById('themeToggleBtn');
-const themeCardBtn = document.getElementById('theme-card-btn');
-
-function applyTheme(themeName) {
-  document.body.classList.remove('navy');
-  if (themeName === 'navy') {
-    document.body.classList.add('navy');
-    themeToggleBtn.innerHTML = '<i class="fa fa-sun"></i>';
-  } else {
-    themeToggleBtn.innerHTML = '<i class="fa fa-moon"></i>';
-  }
-  localStorage.setItem('kfgc_theme', themeName);
-}
-
-/* Load saved theme: if not set, default to light (no 'navy' class). */
-const storedTheme = localStorage.getItem('kfgc_theme') || 'light';
-applyTheme(storedTheme);
-
-/* Header icon toggle */
-themeToggleBtn.addEventListener('click', () => {
-  const next = document.body.classList.contains('navy') ? 'light' : 'navy';
-  applyTheme(next);
-});
-
-/* Card toggle (also syncs) */
-themeCardBtn.addEventListener('click', () => {
-  const next = document.body.classList.contains('navy') ? 'light' : 'navy';
-  applyTheme(next);
-});
 
 /* --- Font size control --- */
 const sizeButtons = document.querySelectorAll('.size-btn');
