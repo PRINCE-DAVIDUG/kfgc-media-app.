@@ -73,6 +73,40 @@
     <!-- APPEARANCE -->
     <div class="section-label">Appearance</div>
 
+    <!-- THEME MODE SELECTOR -->
+<div class="theme-card">
+  <div class="theme-heading">
+    <div class="icon-wrap">
+      <i class="fas fa-palette"></i>
+    </div>
+    <div>
+      <div class="card-title">App Theme</div>
+      <div class="card-sub">Choose how KFGC Media App looks</div>
+    </div>
+  </div>
+
+  <div class="theme-options">
+
+    <button class="theme-option" data-theme-choice="light">
+      <i class="fas fa-sun"></i>
+      <span>Light</span>
+      <i class="fas fa-check-circle selected-icon"></i>
+    </button>
+
+    <button class="theme-option" data-theme-choice="dark">
+      <i class="fas fa-moon"></i>
+      <span>Dark</span>
+      <i class="fas fa-check-circle selected-icon"></i>
+    </button>
+
+    <button class="theme-option" data-theme-choice="system">
+      <i class="fas fa-mobile-screen"></i>
+      <span>System</span>
+      <i class="fas fa-check-circle selected-icon"></i>
+    </button>
+
+  </div>
+</div>
     <div class="card" id="card-font">
       <div class="card-left">
         <div class="icon-wrap"><i class="fa fa-font"></i></div>
@@ -602,36 +636,6 @@ function openChangePassword() {
     "Change Password",
     "<p>Password change feature coming soon.</p>"
   );
-}
 
-function openPrivacy() {
-  openModal(
-    "Privacy & Data",
-    "<p>Your data is stored securely and never shared.</p>"
-  );
-}
-
-function openSupport() {
-  openModal(
-    "Contact Support",
-    `<p>Email: <strong>kfgcmedia@gmail.com</strong></p>
-     <p>WhatsApp: <strong>+256 707 878 056 </strong></p>`
-  );
-}
-
-function openAbout() {
-  openModal(
-    "About KFGC Media App",
-    `<p><strong>Version:</strong> 1.0.0</p>
-     <p><strong>Developer:</strong> KFGC Media Team</p>
-     <p>© ${new Date().getFullYear()} KFGC</p>`
-  );
-}
-
-/* ---------- CLOSE MODAL ON BACKDROP CLICK ---------- */
-backdrop?.addEventListener("click", e => {
-  if (e.target === backdrop) closeModal();
-});
-</script>
 </body>
 </html>
