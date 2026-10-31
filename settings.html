@@ -329,11 +329,22 @@ body.font-lg { font-size: 18px; }
 
 /* ---------- SECTION LABEL ---------- */
 .section-label {
-  margin: 18px 4px 8px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--gray);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 28px 5px 13px;
+  color: var(--primary);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: 1.3px;
   text-transform: uppercase;
+}
+
+.section-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
 }
 
 /* ---------- CARDS ---------- */
