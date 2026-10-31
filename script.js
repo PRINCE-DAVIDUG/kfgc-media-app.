@@ -99,7 +99,30 @@ systemTheme.addEventListener('change', () => {
 // Allow other pages to change the theme
 window.applyKfgcTheme = applyKfgcTheme;
 
+/* ---------- SETTINGS THEME SELECTOR ---------- */
 
+const themeOptions = document.querySelectorAll('.theme-option');
+
+function updateThemeSelection() {
+  const currentTheme = localStorage.getItem('kfgc_theme') || 'system';
+
+  themeOptions.forEach(option => {
+    const selected = option.dataset.themeChoice === currentTheme;
+
+    option.classList.toggle('selected', selected);
+    option.setAttribute('aria-pressed', String(selected));
+  });
+}
+
+themeOptions.forEach(option => {
+  option.addEventListener('click', () => {
+    applyKfgcTheme(option.dataset.themeChoice);
+    updateThemeSelection();
+  });
+});
+
+// Display the currently selected theme
+updateThemeSelection();
 
 /* ---------- Slider (auto + manual) ---------- */
 const slidesContainer = qs('.slides');
