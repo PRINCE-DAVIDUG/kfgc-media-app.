@@ -1,11 +1,8 @@
 // KFGC MEDIA APP — profile controller
-import { auth } from "./firebase.js";
+import { auth, storage } from "./firebase.js";
+import { onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-import {
-  onAuthStateChanged,
-  updateProfile,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 const byId = (id) => document.getElementById(id);
 const fullNameInput = byId("fullName");
 const dpInput = byId("dp");
@@ -144,41 +141,14 @@ if (profileForm) {
 
     try {
       if (dpFile) {
-  if (uploadProgress) {
-    uploadProgress.style.display = "block";
-    uploadProgress.value = 20;
-  }
+        const extension = dpFile.type === "image/png" ? "png" : dpFile.type === "image/webp" ? "webp" : "jpg";
+        const photoRef = ref(storage, `user-dps/${user.uid}.${extension}`);
+        const uploadTask = uploadBytesResumable(photoRef, dpFile, { contentType: dpFile.type });
+        if (uploadProgress) {
+          uploadProgress.style.display = "block";
+          uploadProgress.value = 0;
+        }
 
-  const formData = new FormData();
-
-  formData.append("file", dpFile);
-  formData.append("upload_preset", "kfgc_profiles");
-  formData.append("folder", "kfgc_profiles");
-
-  const response = await fetch(
-    "https://api.cloudinary.com/v1_1/dvnyyq3ru/image/upload",
-    {
-      method: "POST",
-      body: formData
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Cloudinary upload failed.");
-  }
-
-  const result = await response.json();
-
-  if (!result.secure_url) {
-    throw new Error("Cloudinary did not return an image URL.");
-  }
-
-  photoURL = result.secure_url;
-
-  if (uploadProgress) {
-    uploadProgress.value = 100;
-  }
-}
         photoURL = await new Promise((resolve, reject) => {
           uploadTask.on("state_changed",
             (snapshot) => {
@@ -286,3 +256,4 @@ async function updateUserInSheet(uid, email, fullName, photoURL) {
     return null;
   }
 }
+  
