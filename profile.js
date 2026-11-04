@@ -144,14 +144,41 @@ if (profileForm) {
 
     try {
       if (dpFile) {
-        const extension = dpFile.type === "image/png" ? "png" : dpFile.type === "image/webp" ? "webp" : "jpg";
-        const photoRef = ref(storage, `user-dps/${user.uid}.${extension}`);
-        const uploadTask = uploadBytesResumable(photoRef, dpFile, { contentType: dpFile.type });
-        if (uploadProgress) {
-          uploadProgress.style.display = "block";
-          uploadProgress.value = 0;
-        }
+  if (uploadProgress) {
+    uploadProgress.style.display = "block";
+    uploadProgress.value = 20;
+  }
 
+  const formData = new FormData();
+
+  formData.append("file", dpFile);
+  formData.append("upload_preset", "kfgc_profiles");
+  formData.append("folder", "kfgc_profiles");
+
+  const response = await fetch(
+    "https://api.cloudinary.com/v1_1/dvnyyq3ru/image/upload",
+    {
+      method: "POST",
+      body: formData
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Cloudinary upload failed.");
+  }
+
+  const result = await response.json();
+
+  if (!result.secure_url) {
+    throw new Error("Cloudinary did not return an image URL.");
+  }
+
+  photoURL = result.secure_url;
+
+  if (uploadProgress) {
+    uploadProgress.value = 100;
+  }
+}
         photoURL = await new Promise((resolve, reject) => {
           uploadTask.on("state_changed",
             (snapshot) => {
