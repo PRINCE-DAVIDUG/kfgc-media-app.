@@ -1,8 +1,11 @@
 // KFGC MEDIA APP — profile controller
-import { auth, storage } from "./firebase.js";
-import { onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+import { auth } from "./firebase.js";
 
+import {
+  onAuthStateChanged,
+  updateProfile,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 const byId = (id) => document.getElementById(id);
 const fullNameInput = byId("fullName");
 const dpInput = byId("dp");
