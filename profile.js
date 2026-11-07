@@ -541,39 +541,16 @@ if (profileForm) {
         "success"
       );
 
-    } catch (error) {
+} catch (error) {
 
-      console.error(
-        "Profile update failed:",
-        error
-      );
+  console.error("PROFILE UPDATE ERROR:", error);
 
-      let detail =
-        "We couldn't update your profile. Please try again.";
+  setMessage(
+    error.message || "An unexpected error occurred.",
+    "error"
+  );
 
-      if (error.message?.toLowerCase().includes("cloudinary")) {
-
-        detail =
-          "Photo upload failed. Please check your Cloudinary upload preset.";
-
-      } else if (error.message?.toLowerCase().includes("upload preset")) {
-
-        detail =
-          "Cloudinary rejected the upload preset. Check your preset settings.";
-
-      } else if (error.code === "auth/network-request-failed") {
-
-        detail =
-          "Network error. Check your internet connection.";
-
-      } else if (error.code === "auth/requires-recent-login") {
-
-        detail =
-          "Please sign in again before changing your profile.";
-
-      }
-
-      setMessage(detail, "error");
+}
 
     } finally {
 
