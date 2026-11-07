@@ -6,11 +6,10 @@
 import { auth } from "./firebase.js";
 
 import {
-  onAuthStateChanged,
-  updateProfile,
-  signOut
+onAuthStateChanged,
+updateProfile,
+signOut
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
 
 // =============================================
 // CLOUDINARY CONFIGURATION
@@ -20,16 +19,14 @@ const CLOUDINARY_CLOUD_NAME = "dvnyyq3ru";
 const CLOUDINARY_UPLOAD_PRESET = "kfgc_profiles";
 
 const CLOUDINARY_UPLOAD_URL =
-  `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
-
+https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload;
 
 // =============================================
 // GOOGLE SHEETS CONFIGURATION
 // =============================================
 
 const SHEET_ENDPOINT =
-  "https://script.google.com/macros/s/AKfycbx__CHeBV6cEkMycG85Nn-ThWkW0SJIHTRhwXNnyjutTZ4r0gCSs4EVDtFiCt0MFuPx/exec";
-
+"https://script.google.com/macros/s/AKfycbx__CHeBV6cEkMycG85Nn-ThWkW0SJIHTRhwXNnyjutTZ4r0gCSs4EVDtFiCt0MFuPx/exec";
 
 // =============================================
 // DOM ELEMENTS
@@ -63,7 +60,6 @@ const completionFill = byId("completionFill");
 const completionBar = byId("completionBar");
 const completionMessage = byId("completionMessage");
 
-
 // =============================================
 // GLOBAL VARIABLES
 // =============================================
@@ -75,20 +71,18 @@ let originalName = "";
 let originalPhoto = DEFAULT_PHOTO;
 let objectPreviewUrl = null;
 
-
 // =============================================
 // MESSAGE HANDLER
 // =============================================
 
 function setMessage(text, type = "") {
 
-  if (!msg) return;
+if (!msg) return;
 
-  msg.textContent = text;
-  msg.className = `form-message ${type}`.trim();
+msg.textContent = text;
+msg.className = form-message ${type}.trim();
 
 }
-
 
 // =============================================
 // PHOTO DISPLAY
@@ -96,14 +90,13 @@ function setMessage(text, type = "") {
 
 function setPhoto(src) {
 
-  const safeSrc = src || DEFAULT_PHOTO;
+const safeSrc = src || DEFAULT_PHOTO;
 
-  if (headerDp) headerDp.src = safeSrc;
-  if (heroDp) heroDp.src = safeSrc;
-  if (dpPreview) dpPreview.src = safeSrc;
+if (headerDp) headerDp.src = safeSrc;
+if (heroDp) heroDp.src = safeSrc;
+if (dpPreview) dpPreview.src = safeSrc;
 
 }
-
 
 // =============================================
 // PROFILE COMPLETION
@@ -111,42 +104,41 @@ function setPhoto(src) {
 
 function updateCompletion(name, photoURL) {
 
-  const hasName = Boolean((name || "").trim());
+const hasName = Boolean((name || "").trim());
 
-  const hasPhoto = Boolean(
-    photoURL && photoURL !== DEFAULT_PHOTO
-  );
+const hasPhoto = Boolean(
+photoURL && photoURL !== DEFAULT_PHOTO
+);
 
-  const percent =
-    (hasName ? 50 : 0) +
-    (hasPhoto ? 50 : 0);
+const percent =
+(hasName ? 50 : 0) +
+(hasPhoto ? 50 : 0);
 
-  if (completionPercent) {
-    completionPercent.textContent = `${percent}%`;
-  }
+if (completionPercent) {
+completionPercent.textContent = ${percent}%;
+}
 
-  if (completionFill) {
-    completionFill.style.width = `${percent}%`;
-  }
+if (completionFill) {
+completionFill.style.width = ${percent}%;
+}
 
-  if (completionBar) {
-    completionBar.setAttribute(
-      "aria-valuenow",
-      String(percent)
-    );
-  }
+if (completionBar) {
+completionBar.setAttribute(
+"aria-valuenow",
+String(percent)
+);
+}
 
-  if (completionMessage) {
+if (completionMessage) {
 
-    completionMessage.textContent =
-      percent === 100
-        ? "Your profile looks great. Thanks for keeping it up to date!"
-        : "Add your full name and a profile picture to complete your profile.";
-
-  }
+completionMessage.textContent =  
+  percent === 100  
+    ? "Your profile looks great. Thanks for keeping it up to date!"  
+    : "Add your full name and a profile picture to complete your profile.";
 
 }
 
+}
 
 // =============================================
 // RENDER USER PROFILE
@@ -154,47 +146,46 @@ function updateCompletion(name, photoURL) {
 
 function renderUser(user, sheetUser = null) {
 
-  const name =
-    user.displayName ||
-    sheetUser?.fullName ||
-    "Member";
+const name =
+user.displayName ||
+sheetUser?.fullName ||
+"Member";
 
-  const photo =
-    user.photoURL ||
-    sheetUser?.photoURL ||
-    DEFAULT_PHOTO;
+const photo =
+user.photoURL ||
+sheetUser?.photoURL ||
+DEFAULT_PHOTO;
 
-  if (headerName) {
-    headerName.textContent = name;
-  }
+if (headerName) {
+headerName.textContent = name;
+}
 
-  if (heroName) {
+if (heroName) {
 
-    heroName.textContent =
-      name === "Member"
-        ? "Welcome, Member"
-        : `Welcome, ${name}`;
-
-  }
-
-  if (fullNameInput) {
-    fullNameInput.value =
-      name === "Member" ? "" : name;
-  }
-
-  if (profileEmail) {
-    profileEmail.value = user.email || "";
-  }
-
-  setPhoto(photo);
-
-  updateCompletion(
-    name === "Member" ? "" : name,
-    photo
-  );
+heroName.textContent =  
+  name === "Member"  
+    ? "Welcome, Member"  
+    : `Welcome, ${name}`;
 
 }
 
+if (fullNameInput) {
+fullNameInput.value =
+name === "Member" ? "" : name;
+}
+
+if (profileEmail) {
+profileEmail.value = user.email || "";
+}
+
+setPhoto(photo);
+
+updateCompletion(
+name === "Member" ? "" : name,
+photo
+);
+
+}
 
 // =============================================
 // CLOUDINARY IMAGE UPLOAD
@@ -202,53 +193,52 @@ function renderUser(user, sheetUser = null) {
 
 async function uploadToCloudinary(file) {
 
-  const formData = new FormData();
+const formData = new FormData();
 
-  formData.append("file", file);
+formData.append("file", file);
 
-  formData.append(
-    "upload_preset",
-    CLOUDINARY_UPLOAD_PRESET
-  );
+formData.append(
+"upload_preset",
+CLOUDINARY_UPLOAD_PRESET
+);
 
-  formData.append(
-    "folder",
-    "kfgc_profiles"
-  );
+formData.append(
+"folder",
+"kfgc_profiles"
+);
 
-  const response = await fetch(
-    CLOUDINARY_UPLOAD_URL,
-    {
-      method: "POST",
-      body: formData
-    }
-  );
+const response = await fetch(
+CLOUDINARY_UPLOAD_URL,
+{
+method: "POST",
+body: formData
+}
+);
 
-  const result = await response.json();
+const result = await response.json();
 
-  if (!response.ok) {
+if (!response.ok) {
 
-    console.error("Cloudinary error:", result);
+console.error("Cloudinary error:", result);  
 
-    throw new Error(
-      result?.error?.message ||
-      "Cloudinary image upload failed."
-    );
-
-  }
-
-  if (!result.secure_url) {
-
-    throw new Error(
-      "Cloudinary did not return a secure image URL."
-    );
-
-  }
-
-  return result.secure_url;
+throw new Error(  
+  result?.error?.message ||  
+  "Cloudinary image upload failed."  
+);
 
 }
 
+if (!result.secure_url) {
+
+throw new Error(  
+  "Cloudinary did not return a secure image URL."  
+);
+
+}
+
+return result.secure_url;
+
+}
 
 // =============================================
 // FIREBASE AUTHENTICATION
@@ -256,56 +246,55 @@ async function uploadToCloudinary(file) {
 
 onAuthStateChanged(auth, async (user) => {
 
-  if (!user) {
+if (!user) {
 
-    window.location.replace("auth.html");
-    return;
+window.location.replace("auth.html");  
+return;
 
-  }
+}
 
-  currentUser = user;
+currentUser = user;
 
-  renderUser(user);
+renderUser(user);
 
-  try {
+try {
 
-    const sheetUser = await fetchUserFromSheet(user.uid);
+const sheetUser = await fetchUserFromSheet(user.uid);  
 
-    // Prevent an outdated request from updating another session.
-    if (auth.currentUser?.uid !== user.uid) return;
+// Prevent an outdated request from updating another session.  
+if (auth.currentUser?.uid !== user.uid) return;  
 
-    if (sheetUser) {
+if (sheetUser) {  
 
-      if (adminMenu) {
+  if (adminMenu) {  
 
-        adminMenu.style.display =
-          sheetUser.role === "admin" ? "" : "none";
+    adminMenu.style.display =  
+      sheetUser.role === "admin" ? "" : "none";  
 
-      }
+  }  
 
-      renderUser(user, sheetUser);
+  renderUser(user, sheetUser);  
 
-    } else if (adminMenu) {
+} else if (adminMenu) {  
 
-      adminMenu.style.display = "none";
+  adminMenu.style.display = "none";  
 
-    }
+}  
 
-    originalName = fullNameInput?.value || "";
+originalName = fullNameInput?.value || "";  
 
-    originalPhoto =
-      user.photoURL ||
-      sheetUser?.photoURL ||
-      DEFAULT_PHOTO;
+originalPhoto =  
+  user.photoURL ||  
+  sheetUser?.photoURL ||  
+  DEFAULT_PHOTO;
 
-  } catch (error) {
+} catch (error) {
 
-    console.error("Profile loading error:", error);
+console.error("Profile loading error:", error);
 
-  }
+}
 
 });
-
 
 // =============================================
 // PROFILE PHOTO PREVIEW
@@ -313,79 +302,78 @@ onAuthStateChanged(auth, async (user) => {
 
 if (dpInput) {
 
-  dpInput.addEventListener("change", () => {
+dpInput.addEventListener("change", () => {
 
-    const file = dpInput.files?.[0];
+const file = dpInput.files?.[0];  
 
-    if (!file) return;
+if (!file) return;  
 
-    const allowedTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/webp"
-    ];
+const allowedTypes = [  
+  "image/jpeg",  
+  "image/png",  
+  "image/webp"  
+];  
 
-    if (!allowedTypes.includes(file.type)) {
+if (!allowedTypes.includes(file.type)) {  
 
-      dpInput.value = "";
+  dpInput.value = "";  
 
-      if (selectedFileName) {
-        selectedFileName.textContent =
-          "No new photo selected";
-      }
+  if (selectedFileName) {  
+    selectedFileName.textContent =  
+      "No new photo selected";  
+  }  
 
-      setMessage(
-        "Please choose a JPG, PNG, or WEBP image.",
-        "error"
-      );
+  setMessage(  
+    "Please choose a JPG, PNG, or WEBP image.",  
+    "error"  
+  );  
 
-      return;
+  return;  
 
-    }
+}  
 
-    if (file.size > 5 * 1024 * 1024) {
+if (file.size > 5 * 1024 * 1024) {  
 
-      dpInput.value = "";
+  dpInput.value = "";  
 
-      if (selectedFileName) {
-        selectedFileName.textContent =
-          "No new photo selected";
-      }
+  if (selectedFileName) {  
+    selectedFileName.textContent =  
+      "No new photo selected";  
+  }  
 
-      setMessage(
-        "Please choose an image smaller than 5 MB.",
-        "error"
-      );
+  setMessage(  
+    "Please choose an image smaller than 5 MB.",  
+    "error"  
+  );  
 
-      return;
+  return;  
 
-    }
+}  
 
-    if (objectPreviewUrl) {
+if (objectPreviewUrl) {  
 
-      URL.revokeObjectURL(objectPreviewUrl);
+  URL.revokeObjectURL(objectPreviewUrl);  
 
-    }
+}  
 
-    objectPreviewUrl = URL.createObjectURL(file);
+objectPreviewUrl = URL.createObjectURL(file);  
 
-    if (dpPreview) {
-      dpPreview.src = objectPreviewUrl;
-    }
+if (dpPreview) {  
+  dpPreview.src = objectPreviewUrl;  
+}  
 
-    if (selectedFileName) {
-      selectedFileName.textContent = file.name;
-    }
+if (selectedFileName) {  
+  selectedFileName.textContent = file.name;  
+}  
 
-    setMessage(
-      "Photo preview ready. Save changes to upload it.",
-      "info"
-    );
+setMessage(  
+  "Photo preview ready. Save changes to upload it.",  
+  "info"  
+);
 
-  });
+});
 
 }
-
 
 // =============================================
 // SAVE PROFILE
@@ -393,189 +381,211 @@ if (dpInput) {
 
 if (profileForm) {
 
-  profileForm.addEventListener("submit", async (event) => {
+profileForm.addEventListener("submit", async (event) => {
 
-    event.preventDefault();
+event.preventDefault();  
 
-    const user = auth.currentUser || currentUser;
+const user = auth.currentUser || currentUser;  
 
-    if (!user) {
+if (!user) {  
 
-      setMessage(
-        "Please sign in again before updating your profile.",
-        "error"
-      );
+  setMessage(  
+    "Please sign in again before updating your profile.",  
+    "error"  
+  );  
 
-      return;
+  return;  
 
-    }
+}  
 
-    if (!fullNameInput) return;
+if (!fullNameInput) return;  
 
-    const newName = fullNameInput.value.trim();
+const newName = fullNameInput.value.trim();  
 
-    const dpFile = dpInput?.files?.[0];
+const dpFile = dpInput?.files?.[0];  
 
-    if (!newName) {
+if (!newName) {  
 
-      setMessage(
-        "Please enter your full name.",
-        "error"
-      );
+  setMessage(  
+    "Please enter your full name.",  
+    "error"  
+  );  
 
-      fullNameInput.focus();
+  fullNameInput.focus();  
 
-      return;
+  return;  
 
-    }
+}  
 
-    let photoURL = user.photoURL || "";
+let photoURL = user.photoURL || "";  
 
-    if (saveProfileBtn) {
+if (saveProfileBtn) {  
 
-      saveProfileBtn.disabled = true;
+  saveProfileBtn.disabled = true;  
 
-      saveProfileBtn.innerHTML =
-        '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+  saveProfileBtn.innerHTML =  
+    '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';  
 
-    }
+}  
 
-    setMessage(
-      "Saving your profile...",
-      "info"
-    );
+setMessage(  
+  "Saving your profile...",  
+  "info"  
+);  
 
-    try {
+try {  
 
-      // ---------------------------------------
-      // UPLOAD PHOTO TO CLOUDINARY
-      // ---------------------------------------
+  // ---------------------------------------  
+  // UPLOAD PHOTO TO CLOUDINARY  
+  // ---------------------------------------  
 
-      if (dpFile) {
+  if (dpFile) {  
 
-        if (uploadProgress) {
+    if (uploadProgress) {  
 
-          uploadProgress.style.display = "block";
-          uploadProgress.value = 20;
+      uploadProgress.style.display = "block";  
+      uploadProgress.value = 20;  
 
-        }
+    }  
 
-        setMessage(
-          "Uploading your profile picture...",
-          "info"
-        );
+    setMessage(  
+      "Uploading your profile picture...",  
+      "info"  
+    );  
 
-        photoURL = await uploadToCloudinary(dpFile);
+    photoURL = await uploadToCloudinary(dpFile);  
 
-        if (uploadProgress) {
-          uploadProgress.value = 100;
-        }
+    if (uploadProgress) {  
+      uploadProgress.value = 100;  
+    }  
 
-      }
+  }  
 
-      // ---------------------------------------
-      // UPDATE FIREBASE AUTH PROFILE
-      // ---------------------------------------
+  // ---------------------------------------  
+  // UPDATE FIREBASE AUTH PROFILE  
+  // ---------------------------------------  
 
-      await updateProfile(user, {
+  await updateProfile(user, {  
 
-        displayName: newName,
+    displayName: newName,  
 
-        photoURL: photoURL || null
+    photoURL: photoURL || null  
 
-      });
+  });  
 
-      // Refresh Firebase user information.
+  // Refresh Firebase user information.  
 
-      await user.reload();
+  await user.reload();  
 
-      currentUser = auth.currentUser || user;
+  currentUser = auth.currentUser || user;  
 
-      // ---------------------------------------
-      // UPDATE PROFILE DISPLAY
-      // ---------------------------------------
+  // ---------------------------------------  
+  // UPDATE PROFILE DISPLAY  
+  // ---------------------------------------  
 
-      originalName = newName;
+  originalName = newName;  
 
-      originalPhoto =
-        photoURL || DEFAULT_PHOTO;
+  originalPhoto =  
+    photoURL || DEFAULT_PHOTO;  
 
-      renderUser(currentUser);
+  renderUser(currentUser);  
 
-      // ---------------------------------------
-      // UPDATE GOOGLE SHEETS
-      // ---------------------------------------
+  // ---------------------------------------  
+  // UPDATE GOOGLE SHEETS  
+  // ---------------------------------------  
 
-      await updateUserInSheet(
-        user.uid,
-        user.email || "",
-        newName,
-        photoURL
-      );
+  await updateUserInSheet(  
+    user.uid,  
+    user.email || "",  
+    newName,  
+    photoURL  
+  );  
 
-      // ---------------------------------------
-      // CLEAN UP
-      // ---------------------------------------
+  // ---------------------------------------  
+  // CLEAN UP  
+  // ---------------------------------------  
 
-      if (dpInput) {
-        dpInput.value = "";
-      }
+  if (dpInput) {  
+    dpInput.value = "";  
+  }  
 
-      if (selectedFileName) {
+  if (selectedFileName) {  
 
-        selectedFileName.textContent =
-          "No new photo selected";
+    selectedFileName.textContent =  
+      "No new photo selected";  
 
-      }
+  }  
 
-      if (objectPreviewUrl) {
+  if (objectPreviewUrl) {  
 
-        URL.revokeObjectURL(objectPreviewUrl);
+    URL.revokeObjectURL(objectPreviewUrl);  
 
-        objectPreviewUrl = null;
+    objectPreviewUrl = null;  
 
-      }
+  }  
 
-      setMessage(
-        "Your profile has been updated successfully!",
-        "success"
-      );
+  setMessage(  
+    "Your profile has been updated successfully!",  
+    "success"  
+  );  
 
-} catch (error) {
+} catch (error) {  
 
-  console.error("PROFILE UPDATE ERROR:", error);
+  console.error(  
+    "Profile update failed:",  
+    error  
+  );  
 
-  setMessage(
-    error.message || "An unexpected error occurred.",
-    "error"
-  );
+  let detail =  
+    "We couldn't update your profile. Please try again.";  
+
+  if (error.message?.toLowerCase().includes("cloudinary")) {  
+
+    detail =  
+      "Photo upload failed. Please check your Cloudinary upload preset.";  
+
+  } else if (error.message?.toLowerCase().includes("upload preset")) {  
+
+    detail =  
+      "Cloudinary rejected the upload preset. Check your preset settings.";  
+
+  } else if (error.code === "auth/network-request-failed") {  
+
+    detail =  
+      "Network error. Check your internet connection.";  
+
+  } else if (error.code === "auth/requires-recent-login") {  
+
+    detail =  
+      "Please sign in again before changing your profile.";  
+
+  }  
+
+  setMessage(detail, "error");  
+
+} finally {  
+
+  if (uploadProgress) {  
+
+    uploadProgress.style.display = "none";  
+    uploadProgress.value = 0;  
+
+  }  
+
+  if (saveProfileBtn) {  
+
+    saveProfileBtn.disabled = false;  
+
+    saveProfileBtn.innerHTML =  
+      '<i class="fa-solid fa-check"></i> Save changes';  
+
+  }  
 
 }
 
-    } finally {
-
-      if (uploadProgress) {
-
-        uploadProgress.style.display = "none";
-        uploadProgress.value = 0;
-
-      }
-
-      if (saveProfileBtn) {
-
-        saveProfileBtn.disabled = false;
-
-        saveProfileBtn.innerHTML =
-          '<i class="fa-solid fa-check"></i> Save changes';
-
-      }
-
-    }
-
-  });
+});
 
 }
-
 
 // =============================================
 // RESET PROFILE FORM
@@ -583,43 +593,42 @@ if (profileForm) {
 
 if (resetProfileBtn) {
 
-  resetProfileBtn.addEventListener("click", () => {
+resetProfileBtn.addEventListener("click", () => {
 
-    window.setTimeout(() => {
+window.setTimeout(() => {  
 
-      if (fullNameInput) {
-        fullNameInput.value = originalName;
-      }
+  if (fullNameInput) {  
+    fullNameInput.value = originalName;  
+  }  
 
-      if (dpInput) {
-        dpInput.value = "";
-      }
+  if (dpInput) {  
+    dpInput.value = "";  
+  }  
 
-      if (selectedFileName) {
+  if (selectedFileName) {  
 
-        selectedFileName.textContent =
-          "No new photo selected";
+    selectedFileName.textContent =  
+      "No new photo selected";  
 
-      }
+  }  
 
-      if (objectPreviewUrl) {
+  if (objectPreviewUrl) {  
 
-        URL.revokeObjectURL(objectPreviewUrl);
+    URL.revokeObjectURL(objectPreviewUrl);  
 
-        objectPreviewUrl = null;
+    objectPreviewUrl = null;  
 
-      }
+  }  
 
-      setPhoto(originalPhoto);
+  setPhoto(originalPhoto);  
 
-      setMessage("");
+  setMessage("");  
 
-    }, 0);
+}, 0);
 
-  });
+});
 
 }
-
 
 // =============================================
 // LOGOUT
@@ -627,36 +636,35 @@ if (resetProfileBtn) {
 
 if (logoutBtn) {
 
-  logoutBtn.addEventListener("click", async () => {
+logoutBtn.addEventListener("click", async () => {
 
-    logoutBtn.disabled = true;
+logoutBtn.disabled = true;  
 
-    try {
+try {  
 
-      await signOut(auth);
+  await signOut(auth);  
 
-      window.location.replace("auth.html");
+  window.location.replace("auth.html");  
 
-    } catch (error) {
+} catch (error) {  
 
-      console.error(
-        "Logout failed:",
-        error
-      );
+  console.error(  
+    "Logout failed:",  
+    error  
+  );  
 
-      setMessage(
-        "Unable to log out right now. Please try again.",
-        "error"
-      );
+  setMessage(  
+    "Unable to log out right now. Please try again.",  
+    "error"  
+  );  
 
-      logoutBtn.disabled = false;
-
-    }
-
-  });
+  logoutBtn.disabled = false;  
 
 }
 
+});
+
+}
 
 // =============================================
 // FETCH USER FROM GOOGLE SHEETS
@@ -664,104 +672,102 @@ if (logoutBtn) {
 
 async function fetchUserFromSheet(uid) {
 
-  try {
+try {
 
-    const response = await fetch(
-      `${SHEET_ENDPOINT}?uid=${encodeURIComponent(uid)}`
-    );
+const response = await fetch(  
+  `${SHEET_ENDPOINT}?uid=${encodeURIComponent(uid)}`  
+);  
 
-    if (!response.ok) {
+if (!response.ok) {  
 
-      throw new Error(
-        `Sheet request failed: ${response.status}`
-      );
+  throw new Error(  
+    `Sheet request failed: ${response.status}`  
+  );  
 
-    }
+}  
 
-    const data = await response.json();
+const data = await response.json();  
 
-    return data && typeof data === "object"
-      ? data
-      : null;
+return data && typeof data === "object"  
+  ? data  
+  : null;
 
-  } catch (error) {
+} catch (error) {
 
-    console.warn(
-      "Could not fetch profile details from Google Sheets:",
-      error
-    );
+console.warn(  
+  "Could not fetch profile details from Google Sheets:",  
+  error  
+);  
 
-    return null;
-
-  }
+return null;
 
 }
 
+}
 
 // =============================================
 // UPDATE USER IN GOOGLE SHEETS
 // =============================================
 
 async function updateUserInSheet(
-  uid,
-  email,
-  fullName,
-  photoURL
+uid,
+email,
+fullName,
+photoURL
 ) {
 
-  try {
+try {
 
-    const response = await fetch(
-      SHEET_ENDPOINT,
-      {
-        method: "POST",
+const response = await fetch(  
+  SHEET_ENDPOINT,  
+  {  
+    method: "POST",  
 
-        headers: {
-          "Content-Type": "text/plain;charset=utf-8"
-        },
+    headers: {  
+      "Content-Type": "text/plain;charset=utf-8"  
+    },  
 
-        body: JSON.stringify({
+    body: JSON.stringify({  
 
-          uid,
-          email,
-          fullName,
-          photoURL,
+      uid,  
+      email,  
+      fullName,  
+      photoURL,  
 
-          action: "update"
+      action: "update"  
 
-        })
+    })  
 
-      }
-    );
+  }  
+);  
 
-    const responseText = await response.text();
+const responseText = await response.text();  
 
-    try {
+try {  
 
-      return JSON.parse(responseText);
+  return JSON.parse(responseText);  
 
-    } catch {
+} catch {  
 
-      return {
-        success: response.ok,
-        message: responseText
-      };
-
-    }
-
-  } catch (error) {
-
-    console.warn(
-      "Profile saved, but Google Sheets update may have failed:",
-      error
-    );
-
-    return null;
-
-  }
+  return {  
+    success: response.ok,  
+    message: responseText  
+  };  
 
 }
 
+} catch (error) {
+
+console.warn(  
+  "Profile saved, but Google Sheets update may have failed:",  
+  error  
+);  
+
+return null;
+
+}
+
+}
 
 // =============================================
 // END OF PROFILE CONTROLLER
