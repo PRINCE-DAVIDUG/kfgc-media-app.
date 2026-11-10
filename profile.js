@@ -168,6 +168,7 @@ function renderUser(user) {
   if (selectedFileName) {
     selectedFileName.textContent = "No new photo selected";
   }
+  updateCompletion();
 }
 
 
@@ -340,6 +341,7 @@ if (profileForm) {
       currentPhotoURL = photoURL;
 
       renderUser(currentUser);
+      updateCompletion();
 
       if (photoInput) photoInput.value = "";
 
