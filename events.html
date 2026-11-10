@@ -3,108 +3,636 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Events – KFGC Media App</title>
 
 <!-- FullCalendar -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+<!-- Shared Theme -->
 <script src="theme.js" defer></script>
+
+<!-- Main Styles -->
 <link rel="stylesheet" href="styles.css">
+
 <!-- Favicon -->
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
-<!-- Icons -->
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+
+<!-- Font Awesome -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
 <style>
+
+/* =========================
+   KFGC EVENTS DESIGN
+========================= */
+
 :root{
-  --navy:#0A1A44;
+  --navy:#081b36;
+  --navy2:#102c50;
   --gold:#d9a441;
-  --light:#f4f6f9;
-  --radius:14px;
-  --shadow:0 10px 25px rgba(0,0,0,.12);
+  --gold-light:#f3d58c;
+  --white:#ffffff;
+  --light:#f4f6fa;
+  --text:#273449;
+  --muted:#718096;
+  --border:#e5e9f0;
+  --radius:16px;
+  --shadow:0 8px 30px rgba(8,27,54,.09);
 }
 
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Segoe UI,Roboto,Arial,sans-serif;background:var(--light);color:#222;line-height:1.6;}
-.header{background:var(--navy);color:#fff;padding:.8rem 1rem;display:flex;justify-content:space-between;align-items:center;}
-.back-button{color:var(--gold);text-decoration:none;font-weight:600;}
-.logo img{width:42px;height:42px;border-radius:50%;object-fit:cover;}
-.search-filter{max-width:1100px;margin:1.5rem auto;padding:0 1rem;display:grid;grid-template-columns:1fr 180px 180px;gap:.7rem;}
-.search-filter input, .search-filter select, .search-filter button{padding:.6rem .7rem;border-radius:10px;border:1px solid #ccc;}
-.sort-btn{background:var(--gold);color:var(--navy);border:none;font-weight:700;cursor:pointer;}
-.events{max-width:1100px;margin:auto;padding:0 1rem;}
-#calendar{background:#fff;padding:1rem;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:2rem;}
-.fc-toolbar-title{color:var(--navy);font-weight:700;}
-.fc-button{background:var(--navy)!important;border:none!important;}
-.fc-button-primary:not(:disabled).fc-button-active{background:var(--gold)!important;color:#000!important;}
-.event-cards{max-width:1100px;margin:2rem auto 3rem;padding:0 1rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.2rem;}
-.event-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:.25s;}
-.event-card:hover{transform:translateY(-5px);}
-.event-card img{width:100%;height:180px;object-fit:cover;}
-.event-card-content{padding:1rem;}
-.event-card h3{color:var(--navy);font-size:1.1rem;}
-.tag{display:inline-block;margin-top:.4rem;padding:4px 10px;font-size:.75rem;border-radius:6px;color:#fff;}
-.tag.Prayer{background:#4b7bec;}
-.tag.Worship{background:#2ecc71;}
-.tag.Youth{background:#ff9800;}
-.footer{background:var(--navy);color:#fff;text-align:center;padding:1.2rem;}
-.footer a{color:var(--gold);text-decoration:none;}
-@media(max-width:768px){.search-filter{grid-template-columns:1fr;}}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
 
-  
-/* PAGE CONTAINER */
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  font-family:'Segoe UI',Roboto,Arial,sans-serif;
+  background:var(--light);
+  color:var(--text);
+  line-height:1.6;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header{
+  height:75px;
+  background:var(--navy);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 6%;
+  position:sticky;
+  top:0;
+  z-index:1000;
+  box-shadow:0 3px 15px rgba(0,0,0,.15);
+}
+
+.back-button{
+  color:white;
+  text-decoration:none;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  transition:.3s;
+}
+
+.back-button:hover{
+  color:var(--gold);
+  transform:translateX(-3px);
+}
+
+.logo img{
+  width:48px;
+  height:48px;
+  object-fit:cover;
+  border-radius:50%;
+  border:2px solid var(--gold);
+}
+
+/* =========================
+   HERO SECTION
+========================= */
+
+.hero{
+  min-height:390px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:75px 20px;
+  position:relative;
+  overflow:hidden;
+
+  background:
+  linear-gradient(rgba(5,20,43,.87),rgba(5,20,43,.91)),
+  url('kfgc.jpg') center/cover no-repeat;
+}
+
+.hero::before{
+  content:"";
+  position:absolute;
+  width:300px;
+  height:300px;
+  border:1px solid rgba(217,164,65,.25);
+  border-radius:50%;
+  top:-150px;
+  right:-80px;
+}
+
+.hero::after{
+  content:"";
+  position:absolute;
+  width:250px;
+  height:250px;
+  border:1px solid rgba(217,164,65,.2);
+  border-radius:50%;
+  bottom:-130px;
+  left:-80px;
+}
+
+.hero-content{
+  max-width:850px;
+  position:relative;
+  z-index:2;
+}
+
+.hero-label{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  color:var(--gold-light);
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:2px;
+  margin-bottom:20px;
+  border:1px solid rgba(217,164,65,.4);
+  background:rgba(217,164,65,.08);
+  padding:10px 18px;
+  border-radius:30px;
+}
+
+.hero h1{
+  color:white;
+  font-size:clamp(35px,6vw,58px);
+  line-height:1.15;
+  font-weight:800;
+  margin-bottom:20px;
+}
+
+.hero h1 span{
+  color:var(--gold);
+}
+
+.hero p{
+  color:#dce5f1;
+  font-size:16px;
+  max-width:650px;
+  margin:auto;
+  line-height:1.9;
+}
+
+/* =========================
+   MAIN CONTAINER
+========================= */
 
 .container{
-max-width:1200px;
-margin:auto;
-padding:35px 20px;
+  max-width:1200px;
+  margin:auto;
+  padding:55px 20px;
 }
+
+/* =========================
+   SEARCH AND FILTERS
+========================= */
+
+.search-filter{
+  display:grid;
+  grid-template-columns:1fr 200px 170px;
+  gap:12px;
+  margin-bottom:35px;
+  padding:20px;
+  background:white;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  border:1px solid var(--border);
+}
+
+.search-filter input,
+.search-filter select{
+  width:100%;
+  padding:14px 16px;
+  border:1px solid var(--border);
+  background:#fafbfc;
+  border-radius:10px;
+  outline:none;
+  font-size:14px;
+  color:var(--text);
+  transition:.3s;
+}
+
+.search-filter input:focus,
+.search-filter select:focus{
+  border-color:var(--gold);
+  background:white;
+  box-shadow:0 0 0 3px rgba(217,164,65,.12);
+}
+
+.sort-btn{
+  background:var(--navy);
+  color:white;
+  border:none;
+  border-radius:10px;
+  padding:12px 16px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.sort-btn:hover{
+  background:var(--gold);
+  color:var(--navy);
+}
+
+/* =========================
+   CALENDAR
+========================= */
+
+.events{
+  margin-bottom:50px;
+}
+
+#calendar{
+  background:white;
+  padding:25px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  border:1px solid var(--border);
+}
+
+/* Calendar toolbar */
+
+.fc .fc-toolbar{
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:25px!important;
+}
+
+.fc .fc-toolbar-title{
+  color:var(--navy);
+  font-size:23px;
+  font-weight:800;
+}
+
+.fc .fc-button{
+  background:var(--navy)!important;
+  border:none!important;
+  border-radius:8px!important;
+  padding:9px 13px!important;
+  font-weight:600!important;
+  box-shadow:none!important;
+}
+
+.fc .fc-button:hover{
+  background:var(--gold)!important;
+  color:var(--navy)!important;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active{
+  background:var(--gold)!important;
+  color:var(--navy)!important;
+}
+
+.fc .fc-daygrid-day-number{
+  color:var(--navy);
+  text-decoration:none;
+  padding:8px;
+  font-weight:600;
+}
+
+.fc .fc-col-header-cell{
+  background:#f4f6fa;
+  padding:10px 0;
+}
+
+.fc .fc-col-header-cell-cushion{
+  color:var(--navy);
+  font-weight:700;
+  text-decoration:none;
+}
+
+.fc .fc-day-today{
+  background:rgba(217,164,65,.12)!important;
+}
+
+.fc .fc-event{
+  border:none;
+  background:var(--navy);
+  padding:3px 5px;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+/* =========================
+   EVENT CARDS
+========================= */
+
+.event-cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:25px;
+  margin:30px 0 10px;
+}
+
+.event-card{
+  background:white;
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  border:1px solid var(--border);
+  transition:transform .3s,box-shadow .3s;
+}
+
+.event-card:hover{
+  transform:translateY(-7px);
+  box-shadow:0 15px 35px rgba(8,27,54,.15);
+}
+
+.event-card img{
+  width:100%;
+  height:210px;
+  object-fit:cover;
+  display:block;
+  transition:transform .5s;
+}
+
+.event-card:hover img{
+  transform:scale(1.04);
+}
+
+.event-card-content{
+  padding:22px;
+}
+
+.event-card h3{
+  color:var(--navy);
+  font-size:19px;
+  font-weight:800;
+  margin-bottom:12px;
+  line-height:1.4;
+}
+
+.event-card p{
+  color:var(--muted);
+  font-size:14px;
+  margin-bottom:10px;
+  line-height:1.7;
+}
+
+.event-card p strong{
+  color:var(--navy);
+}
+
+.tag{
+  display:inline-block;
+  margin-top:8px;
+  padding:6px 13px;
+  font-size:11px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.7px;
+  border-radius:30px;
+}
+
+.tag.Prayer{
+  background:#e8efff;
+  color:#315db5;
+}
+
+.tag.Worship{
+  background:#e3f8ed;
+  color:#16834b;
+}
+
+.tag.Youth{
+  background:#fff0d9;
+  color:#b76b00;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer{
+  background:var(--navy);
+  color:white;
+  text-align:center;
+  padding:30px 15px;
+  border-top:3px solid var(--gold);
+}
+
+.footer p{
+  font-size:13px;
+  color:#dce5f1;
+}
+
+.footer a{
+  color:var(--gold);
+  text-decoration:none;
+}
+
+/* =========================
+   MOBILE RESPONSIVENESS
+========================= */
+
+@media(max-width:768px){
+
+  .header{
+    height:65px;
+    padding:0 18px;
+  }
+
+  .logo img{
+    width:42px;
+    height:42px;
+  }
+
+  .hero{
+    min-height:340px;
+    padding:60px 20px;
+  }
+
+  .hero h1{
+    font-size:36px;
+  }
+
+  .hero p{
+    font-size:14px;
+  }
+
+  .container{
+    padding:35px 15px;
+  }
+
+  .search-filter{
+    grid-template-columns:1fr;
+    padding:15px;
+    gap:12px;
+  }
+
+  #calendar{
+    padding:12px 8px;
+  }
+
+  .fc .fc-toolbar-title{
+    font-size:18px;
+  }
+
+  .fc .fc-button{
+    padding:6px 9px!important;
+    font-size:12px!important;
+  }
+
+  .fc .fc-daygrid-day-number{
+    padding:4px;
+    font-size:12px;
+  }
+
+  .event-cards{
+    grid-template-columns:1fr;
+    gap:18px;
+  }
+
+  .event-card img{
+    height:200px;
+  }
+
+}
+
+@media(max-width:380px){
+
+  .hero h1{
+    font-size:30px;
+  }
+
+  .hero-label{
+    font-size:10px;
+    letter-spacing:1px;
+  }
+
+  .fc .fc-toolbar{
+    justify-content:center;
+  }
+
+}
+
 </style>
 </head>
+
 <body>
 
+<!-- =========================
+     HEADER
+========================= -->
+
 <header class="header">
-  <a href="javascript:history.back()" class="back-button">← Back</a>
-  <div class="logo"><img src="kfgc.jpg" alt="KFGC"></div>
+
+  <a href="javascript:history.back()" class="back-button">
+    <i class="fas fa-arrow-left"></i>
+    Back
+  </a>
+
+  <div class="logo">
+    <img src="kfgc.jpg" alt="KFGC">
+  </div>
+
 </header>
+
+
+<!-- =========================
+     HERO
+========================= -->
+
 <section class="hero">
 
-<div class="hero-content">
+  <div class="hero-content">
 
-<div class="hero-label">
-<i class="fas fa-church"></i> KIRINDA FULL GOSPEL CHURCH
-</div>
+    <div class="hero-label">
+      <i class="fas fa-church"></i>
+      KIRINDA FULL GOSPEL CHURCH
+    </div>
 
-<h1>Church Events <span>& Programs</span></h1>
+    <h1>
+      Church Events <span>& Programs</span>
+    </h1>
 
-<p>
-Discover upcoming services, worship experiences,
-prayer meetings, conferences and fellowship activities.
-There is always something happening at KFGC!
-</p>
+    <p>
+      Discover upcoming services, worship experiences,
+      prayer meetings, conferences and fellowship activities.
+      There is always something happening at KFGC!
+    </p>
 
-</div>
-<main class="container">
-<div class="search-filter">
-  <input id="searchInput" placeholder="Search events…">
-  <select id="categoryFilter">
-    <option value="all">All Categories</option>
-    <option value="Prayer">Prayer</option>
-    <option value="Worship">Worship</option>
-    <option value="Youth">Youth</option>
-  </select>
-  <button id="sortBtn" class="sort-btn">Sort by Date ↑</button>
-</div>
+  </div>
 
-<section class="events">
-  <div id="calendar"></div>
 </section>
 
-<div class="event-cards" id="eventCards"></div>
+
+<!-- =========================
+     MAIN CONTENT
+========================= -->
+
+<main class="container">
+
+  <!-- SEARCH AND FILTER -->
+
+  <div class="search-filter">
+
+    <input
+      id="searchInput"
+      type="search"
+      placeholder="Search events..."
+    >
+
+    <select id="categoryFilter">
+
+      <option value="all">All Categories</option>
+      <option value="Prayer">Prayer</option>
+      <option value="Worship">Worship</option>
+      <option value="Youth">Youth</option>
+
+    </select>
+
+    <button id="sortBtn" class="sort-btn">
+      <i class="fas fa-sort"></i>
+      Sort by Date ↑
+    </button>
+
+  </div>
+
+
+  <!-- CALENDAR -->
+
+  <section class="events">
+
+    <div id="calendar"></div>
+
+  </section>
+
+
+  <!-- EVENT CARDS -->
+
+  <div class="event-cards" id="eventCards"></div>
+
 </main>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
 <footer class="footer">
-  <p>&copy; 2026 KFGC Media App</p>
+
+  <p>
+    &copy; 2026 KFGC Media App.
+    All Rights Reserved.
+  </p>
+
 </footer>
+
+
+<!-- =========================
+     EXISTING JAVASCRIPT
+     UNCHANGED
+========================= -->
 
 <script>
 // ===== EVENTS LOGIC =====
@@ -175,4 +703,4 @@ setInterval(()=>{
 </script>
 
 </body>
-</html>
+  </html>
