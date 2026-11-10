@@ -86,6 +86,59 @@ function displayPhoto(url) {
 // RENDER USER INFORMATION
 // ==========================================
 
+// ==========================================
+// PROFILE COMPLETION STATUS
+// ==========================================
+
+function updateCompletion() {
+
+  const percentElement =
+    document.getElementById("completionPercent");
+
+  const fillElement =
+    document.getElementById("completionFill");
+
+  const barElement =
+    document.getElementById("completionBar");
+
+  const messageElement =
+    document.getElementById("completionMessage");
+
+  const name = fullNameInput?.value.trim();
+  const email = emailInput?.value.trim();
+  const photo = currentPhotoURL;
+
+  let completed = 0;
+
+  if (name) completed++;
+  if (email) completed++;
+  if (photo) completed++;
+
+  const percentage = Math.round((completed / 3) * 100);
+
+  if (percentElement) {
+    percentElement.textContent = percentage + "%";
+  }
+
+  if (fillElement) {
+    fillElement.style.width = percentage + "%";
+  }
+
+  if (barElement) {
+    barElement.setAttribute("aria-valuenow", percentage);
+  }
+
+  if (messageElement) {
+    if (percentage === 100) {
+      messageElement.textContent =
+        "Your profile is complete. Great job!";
+    } else {
+      messageElement.textContent =
+        "Complete your profile to reach 100%.";
+    }
+  }
+        }
+
 function renderUser(user) {
   currentUser = user;
   currentPhotoURL = user.photoURL || "";
