@@ -29,9 +29,6 @@ body{font-family:Segoe UI,Roboto,Arial,sans-serif;background:var(--light);color:
 .header{background:var(--navy);color:#fff;padding:.8rem 1rem;display:flex;justify-content:space-between;align-items:center;}
 .back-button{color:var(--gold);text-decoration:none;font-weight:600;}
 .logo img{width:42px;height:42px;border-radius:50%;object-fit:cover;}
-.hero{background:linear-gradient(rgba(10,26,68,.75),rgba(10,26,68,.75)),url("https://images.unsplash.com/photo-1520975698519-2a1e57f35e21?auto=format&fit=crop&w=1350&q=80") center/cover no-repeat;padding:3rem 1rem;text-align:center;color:#fff;}
-.hero h1{font-size:clamp(1.8rem,4vw,2.6rem);color:var(--gold);}
-.hero p{max-width:600px;margin:.5rem auto 0;opacity:.95;}
 .search-filter{max-width:1100px;margin:1.5rem auto;padding:0 1rem;display:grid;grid-template-columns:1fr 180px 180px;gap:.7rem;}
 .search-filter input, .search-filter select, .search-filter button{padding:.6rem .7rem;border-radius:10px;border:1px solid #ccc;}
 .sort-btn{background:var(--gold);color:var(--navy);border:none;font-weight:700;cursor:pointer;}
@@ -78,7 +75,7 @@ There is always something happening at KFGC!
 </p>
 
 </div>
-
+<main class="container">
 <div class="search-filter">
   <input id="searchInput" placeholder="Search events…">
   <select id="categoryFilter">
@@ -95,7 +92,7 @@ There is always something happening at KFGC!
 </section>
 
 <div class="event-cards" id="eventCards"></div>
-
+</main>
 <footer class="footer">
   <p>&copy; 2026 KFGC Media App</p>
 </footer>
