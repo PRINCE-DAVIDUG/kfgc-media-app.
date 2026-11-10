@@ -1,774 +1,372 @@
-// =============================================
+// ==========================================
 // KFGC MEDIA APP — PROFILE CONTROLLER
-// Firebase Authentication + Cloudinary
-// =============================================
+// ==========================================
 
 import { auth } from "./firebase.js";
 
 import {
-onAuthStateChanged,
-updateProfile,
-signOut
+  onAuthStateChanged,
+  updateProfile,
+  signOut
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// =============================================
-// CLOUDINARY CONFIGURATION
-// =============================================
+
+// ==========================================
+// CONFIGURATION
+// ==========================================
 
 const CLOUDINARY_CLOUD_NAME = "dvnyyq3ru";
 const CLOUDINARY_UPLOAD_PRESET = "kfgc_profiles";
 
-const CLOUDINARY_UPLOAD_URL =
-https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload;
-
-// =============================================
-// GOOGLE SHEETS CONFIGURATION
-// =============================================
-
 const SHEET_ENDPOINT =
-"https://script.google.com/macros/s/AKfycbx__CHeBV6cEkMycG85Nn-ThWkW0SJIHTRhwXNnyjutTZ4r0gCSs4EVDtFiCt0MFuPx/exec";
+  "https://script.google.com/macros/s/AKfycbycn8JwMsEnEwfme8RVZ9E1iGQMrSou4XnpJRoTbrBzoUD-XNfOc7oZ2Mh1J8QiOxrD_g/exec";
 
-// =============================================
-// DOM ELEMENTS
-// =============================================
 
-const byId = (id) => document.getElementById(id);
+// ==========================================
+// HTML ELEMENTS
+// ==========================================
 
-const fullNameInput = byId("fullName");
-const dpInput = byId("dp");
-const dpPreview = byId("dpPreview");
-const uploadProgress = byId("uploadProgress");
-const msg = byId("msg");
-const profileForm = byId("profileForm");
+const profileForm = document.getElementById("profileForm");
+const fullNameInput = document.getElementById("fullName");
+const emailInput = document.getElementById("profileEmail");
 
-const headerName = byId("headerName");
-const headerDp = byId("headerDp");
+const photoInput = document.getElementById("dp");
+const photoPreview = document.getElementById("dpPreview");
+const selectedFileName = document.getElementById("selectedFileName");
 
-const heroName = byId("profileDisplayName");
-const heroDp = byId("heroDp");
+const saveButton = document.getElementById("saveProfileBtn");
+const resetButton = document.getElementById("resetProfileBtn");
 
-const profileEmail = byId("profileEmail");
-const logoutBtn = byId("logoutBtn");
-const adminMenu = byId("adminMenu");
+const message = document.getElementById("msg");
+const progress = document.getElementById("uploadProgress");
 
-const selectedFileName = byId("selectedFileName");
-const saveProfileBtn = byId("saveProfileBtn");
-const resetProfileBtn = byId("resetProfileBtn");
+const headerName = document.getElementById("headerName");
+const headerDp = document.getElementById("headerDp");
 
-const completionPercent = byId("completionPercent");
-const completionFill = byId("completionFill");
-const completionBar = byId("completionBar");
-const completionMessage = byId("completionMessage");
+const displayName = document.getElementById("profileDisplayName");
+const heroDp = document.getElementById("heroDp");
 
-// =============================================
-// GLOBAL VARIABLES
-// =============================================
+const logoutButton = document.getElementById("logoutBtn");
 
-const DEFAULT_PHOTO = "user.jpg";
+
+// ==========================================
+// CURRENT USER
+// ==========================================
 
 let currentUser = null;
-let originalName = "";
-let originalPhoto = DEFAULT_PHOTO;
-let objectPreviewUrl = null;
+let currentPhotoURL = "";
 
-// =============================================
+
+// ==========================================
 // MESSAGE HANDLER
-// =============================================
+// ==========================================
 
-function setMessage(text, type = "") {
+function showMessage(text, type = "info") {
+  if (!message) return;
 
-if (!msg) return;
-
-msg.textContent = text;
-msg.className = form-message ${type}.trim();
-
+  message.textContent = text;
+  message.className = "profile-message " + type;
 }
 
-// =============================================
+
+// ==========================================
 // PHOTO DISPLAY
-// =============================================
+// ==========================================
 
-function setPhoto(src) {
+function displayPhoto(url) {
+  if (!url) return;
 
-const safeSrc = src || DEFAULT_PHOTO;
-
-if (headerDp) headerDp.src = safeSrc;
-if (heroDp) heroDp.src = safeSrc;
-if (dpPreview) dpPreview.src = safeSrc;
-
+  if (photoPreview) photoPreview.src = url;
+  if (headerDp) headerDp.src = url;
+  if (heroDp) heroDp.src = url;
 }
 
-// =============================================
-// PROFILE COMPLETION
-// =============================================
 
-function updateCompletion(name, photoURL) {
+// ==========================================
+// RENDER USER INFORMATION
+// ==========================================
 
-const hasName = Boolean((name || "").trim());
+function renderUser(user) {
+  currentUser = user;
+  currentPhotoURL = user.photoURL || "";
 
-const hasPhoto = Boolean(
-photoURL && photoURL !== DEFAULT_PHOTO
-);
+  const name = user.displayName || "KFGC Member";
 
-const percent =
-(hasName ? 50 : 0) +
-(hasPhoto ? 50 : 0);
+  if (fullNameInput) {
+    fullNameInput.value = user.displayName || "";
+  }
 
-if (completionPercent) {
-completionPercent.textContent = ${percent}%;
+  if (emailInput) {
+    emailInput.value = user.email || "";
+  }
+
+  if (headerName) {
+    headerName.textContent = name;
+  }
+
+  if (displayName) {
+    displayName.textContent = name;
+  }
+
+  if (currentPhotoURL) {
+    displayPhoto(currentPhotoURL);
+  }
+
+  if (selectedFileName) {
+    selectedFileName.textContent = "No new photo selected";
+  }
 }
 
-if (completionFill) {
-completionFill.style.width = ${percent}%;
+
+// ==========================================
+// PHOTO PREVIEW
+// ==========================================
+
+if (photoInput) {
+  photoInput.addEventListener("change", () => {
+
+    const file = photoInput.files[0];
+
+    if (!file) return;
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp"
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      showMessage("Please select a JPG, PNG or WEBP image.", "error");
+      photoInput.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      showMessage("Your image must not exceed 5MB.", "error");
+      photoInput.value = "";
+      return;
+    }
+
+    const previewURL = URL.createObjectURL(file);
+
+    if (photoPreview) {
+      photoPreview.src = previewURL;
+    }
+
+    if (selectedFileName) {
+      selectedFileName.textContent = file.name;
+    }
+
+    showMessage("Photo selected successfully.", "success");
+  });
 }
 
-if (completionBar) {
-completionBar.setAttribute(
-"aria-valuenow",
-String(percent)
-);
+
+// ==========================================
+// UPLOAD PHOTO TO CLOUDINARY
+// ==========================================
+
+async function uploadPhoto(file) {
+
+  const uploadURL =
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+
+  const formData = new FormData();
+
+  formData.append("file", file);
+  formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+  formData.append("folder", "kfgc_profiles");
+
+  if (progress) {
+    progress.style.display = "block";
+    if ("value" in progress) progress.value = 20;
+  }
+
+  const response = await fetch(uploadURL, {
+    method: "POST",
+    body: formData
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      result.error?.message || "Cloudinary photo upload failed."
+    );
+  }
+
+  if (!result.secure_url) {
+    throw new Error("Cloudinary did not return a photo URL.");
+  }
+
+  if (progress && "value" in progress) {
+    progress.value = 100;
+  }
+
+  return result.secure_url;
 }
 
-if (completionMessage) {
 
-completionMessage.textContent =  
-  percent === 100  
-    ? "Your profile looks great. Thanks for keeping it up to date!"  
-    : "Add your full name and a profile picture to complete your profile.";
+// ==========================================
+// SAVE PROFILE TO GOOGLE SHEETS
+// ==========================================
 
+async function saveToSheet(user, name, photoURL) {
+
+  const response = await fetch(SHEET_ENDPOINT, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "saveProfile",
+      uid: user.uid,
+      email: user.email,
+      fullName: name,
+      photoURL: photoURL
+    })
+  });
+
+  const result = await response.json();
+
+  if (!result.success) {
+    throw new Error(result.message || "Spreadsheet update failed.");
+  }
+
+  return result;
 }
 
-}
 
-// =============================================
-// RENDER USER PROFILE
-// =============================================
-
-function renderUser(user, sheetUser = null) {
-
-const name =
-user.displayName ||
-sheetUser?.fullName ||
-"Member";
-
-const photo =
-user.photoURL ||
-sheetUser?.photoURL ||
-DEFAULT_PHOTO;
-
-if (headerName) {
-headerName.textContent = name;
-}
-
-if (heroName) {
-
-heroName.textContent =  
-  name === "Member"  
-    ? "Welcome, Member"  
-    : `Welcome, ${name}`;
-
-}
-
-if (fullNameInput) {
-fullNameInput.value =
-name === "Member" ? "" : name;
-}
-
-if (profileEmail) {
-profileEmail.value = user.email || "";
-}
-
-setPhoto(photo);
-
-updateCompletion(
-name === "Member" ? "" : name,
-photo
-);
-
-}
-
-// =============================================
-// CLOUDINARY IMAGE UPLOAD
-// =============================================
-
-async function uploadToCloudinary(file) {
-
-const formData = new FormData();
-
-formData.append("file", file);
-
-formData.append(
-"upload_preset",
-CLOUDINARY_UPLOAD_PRESET
-);
-
-formData.append(
-"folder",
-"kfgc_profiles"
-);
-
-const response = await fetch(
-CLOUDINARY_UPLOAD_URL,
-{
-method: "POST",
-body: formData
-}
-);
-
-const result = await response.json();
-
-if (!response.ok) {
-
-console.error("Cloudinary error:", result);  
-
-throw new Error(  
-  result?.error?.message ||  
-  "Cloudinary image upload failed."  
-);
-
-}
-
-if (!result.secure_url) {
-
-throw new Error(  
-  "Cloudinary did not return a secure image URL."  
-);
-
-}
-
-return result.secure_url;
-
-}
-
-// =============================================
-// FIREBASE AUTHENTICATION
-// =============================================
-
-onAuthStateChanged(auth, async (user) => {
-
-if (!user) {
-
-window.location.replace("auth.html");  
-return;
-
-}
-
-currentUser = user;
-
-renderUser(user);
-
-try {
-
-const sheetUser = await fetchUserFromSheet(user.uid);  
-
-// Prevent an outdated request from updating another session.  
-if (auth.currentUser?.uid !== user.uid) return;  
-
-if (sheetUser) {  
-
-  if (adminMenu) {  
-
-    adminMenu.style.display =  
-      sheetUser.role === "admin" ? "" : "none";  
-
-  }  
-
-  renderUser(user, sheetUser);  
-
-} else if (adminMenu) {  
-
-  adminMenu.style.display = "none";  
-
-}  
-
-originalName = fullNameInput?.value || "";  
-
-originalPhoto =  
-  user.photoURL ||  
-  sheetUser?.photoURL ||  
-  DEFAULT_PHOTO;
-
-} catch (error) {
-
-console.error("Profile loading error:", error);
-
-}
-
-});
-
-// =============================================
-// PROFILE PHOTO PREVIEW
-// =============================================
-
-if (dpInput) {
-
-dpInput.addEventListener("change", () => {
-
-const file = dpInput.files?.[0];  
-
-if (!file) return;  
-
-const allowedTypes = [  
-  "image/jpeg",  
-  "image/png",  
-  "image/webp"  
-];  
-
-if (!allowedTypes.includes(file.type)) {  
-
-  dpInput.value = "";  
-
-  if (selectedFileName) {  
-    selectedFileName.textContent =  
-      "No new photo selected";  
-  }  
-
-  setMessage(  
-    "Please choose a JPG, PNG, or WEBP image.",  
-    "error"  
-  );  
-
-  return;  
-
-}  
-
-if (file.size > 5 * 1024 * 1024) {  
-
-  dpInput.value = "";  
-
-  if (selectedFileName) {  
-    selectedFileName.textContent =  
-      "No new photo selected";  
-  }  
-
-  setMessage(  
-    "Please choose an image smaller than 5 MB.",  
-    "error"  
-  );  
-
-  return;  
-
-}  
-
-if (objectPreviewUrl) {  
-
-  URL.revokeObjectURL(objectPreviewUrl);  
-
-}  
-
-objectPreviewUrl = URL.createObjectURL(file);  
-
-if (dpPreview) {  
-  dpPreview.src = objectPreviewUrl;  
-}  
-
-if (selectedFileName) {  
-  selectedFileName.textContent = file.name;  
-}  
-
-setMessage(  
-  "Photo preview ready. Save changes to upload it.",  
-  "info"  
-);
-
-});
-
-}
-
-// =============================================
-// SAVE PROFILE
-// =============================================
+// ==========================================
+// SAVE PROFILE FORM
+// ==========================================
 
 if (profileForm) {
 
-profileForm.addEventListener("submit", async (event) => {
+  profileForm.addEventListener("submit", async (event) => {
 
-event.preventDefault();  
+    event.preventDefault();
 
-const user = auth.currentUser || currentUser;  
+    if (!currentUser) {
+      showMessage("Please sign in again.", "error");
+      return;
+    }
 
-if (!user) {  
+    const name = fullNameInput.value.trim();
+    const file = photoInput?.files[0];
 
-  setMessage(  
-    "Please sign in again before updating your profile.",  
-    "error"  
-  );  
+    if (!name) {
+      showMessage("Please enter your full name.", "error");
+      return;
+    }
 
-  return;  
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving...";
 
-}  
+    try {
 
-if (!fullNameInput) return;  
+      showMessage("Updating your profile...", "info");
 
-const newName = fullNameInput.value.trim();  
+      let photoURL = currentPhotoURL;
 
-const dpFile = dpInput?.files?.[0];  
+      // Upload a new photo if selected
+      if (file) {
+        showMessage("Uploading your photo...", "info");
 
-if (!newName) {  
+        photoURL = await uploadPhoto(file);
+      }
 
-  setMessage(  
-    "Please enter your full name.",  
-    "error"  
-  );  
+      // Update Firebase Authentication
+      await updateProfile(currentUser, {
+        displayName: name,
+        photoURL: photoURL || null
+      });
 
-  fullNameInput.focus();  
+      // Save member details to Google Sheets
+      showMessage("Saving member information...", "info");
 
-  return;  
+      await saveToSheet(currentUser, name, photoURL);
 
-}  
+      currentPhotoURL = photoURL;
 
-let photoURL = user.photoURL || "";  
+      renderUser(currentUser);
 
-if (saveProfileBtn) {  
+      if (photoInput) photoInput.value = "";
 
-  saveProfileBtn.disabled = true;  
+      showMessage("Your profile was saved successfully!", "success");
 
-  saveProfileBtn.innerHTML =  
-    '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';  
+    } catch (error) {
 
-}  
+      console.error("PROFILE SAVE ERROR:", error);
 
-setMessage(  
-  "Saving your profile...",  
-  "info"  
-);  
+      showMessage(error.message || "Unable to save your profile.", "error");
 
-try {  
+    } finally {
 
-  // ---------------------------------------  
-  // UPLOAD PHOTO TO CLOUDINARY  
-  // ---------------------------------------  
+      saveButton.disabled = false;
+      saveButton.textContent = "Save Profile";
 
-  if (dpFile) {  
-
-    if (uploadProgress) {  
-
-      uploadProgress.style.display = "block";  
-      uploadProgress.value = 20;  
-
-    }  
-
-    setMessage(  
-      "Uploading your profile picture...",  
-      "info"  
-    );  
-
-    photoURL = await uploadToCloudinary(dpFile);  
-
-    if (uploadProgress) {  
-      uploadProgress.value = 100;  
-    }  
-
-  }  
-
-  // ---------------------------------------  
-  // UPDATE FIREBASE AUTH PROFILE  
-  // ---------------------------------------  
-
-  await updateProfile(user, {  
-
-    displayName: newName,  
-
-    photoURL: photoURL || null  
-
-  });  
-
-  // Refresh Firebase user information.  
-
-  await user.reload();  
-
-  currentUser = auth.currentUser || user;  
-
-  // ---------------------------------------  
-  // UPDATE PROFILE DISPLAY  
-  // ---------------------------------------  
-
-  originalName = newName;  
-
-  originalPhoto =  
-    photoURL || DEFAULT_PHOTO;  
-
-  renderUser(currentUser);  
-
-  // ---------------------------------------  
-  // UPDATE GOOGLE SHEETS  
-  // ---------------------------------------  
-
-  await updateUserInSheet(  
-    user.uid,  
-    user.email || "",  
-    newName,  
-    photoURL  
-  );  
-
-  // ---------------------------------------  
-  // CLEAN UP  
-  // ---------------------------------------  
-
-  if (dpInput) {  
-    dpInput.value = "";  
-  }  
-
-  if (selectedFileName) {  
-
-    selectedFileName.textContent =  
-      "No new photo selected";  
-
-  }  
-
-  if (objectPreviewUrl) {  
-
-    URL.revokeObjectURL(objectPreviewUrl);  
-
-    objectPreviewUrl = null;  
-
-  }  
-
-  setMessage(  
-    "Your profile has been updated successfully!",  
-    "success"  
-  );  
-
-} catch (error) {  
-
-  console.error(  
-    "Profile update failed:",  
-    error  
-  );  
-
-  let detail =  
-    "We couldn't update your profile. Please try again.";  
-
-  if (error.message?.toLowerCase().includes("cloudinary")) {  
-
-    detail =  
-      "Photo upload failed. Please check your Cloudinary upload preset.";  
-
-  } else if (error.message?.toLowerCase().includes("upload preset")) {  
-
-    detail =  
-      "Cloudinary rejected the upload preset. Check your preset settings.";  
-
-  } else if (error.code === "auth/network-request-failed") {  
-
-    detail =  
-      "Network error. Check your internet connection.";  
-
-  } else if (error.code === "auth/requires-recent-login") {  
-
-    detail =  
-      "Please sign in again before changing your profile.";  
-
-  }  
-
-  setMessage(detail, "error");  
-
-} finally {  
-
-  if (uploadProgress) {  
-
-    uploadProgress.style.display = "none";  
-    uploadProgress.value = 0;  
-
-  }  
-
-  if (saveProfileBtn) {  
-
-    saveProfileBtn.disabled = false;  
-
-    saveProfileBtn.innerHTML =  
-      '<i class="fa-solid fa-check"></i> Save changes';  
-
-  }  
-
+      if (progress) {
+        if ("value" in progress) progress.value = 0;
+        progress.style.display = "none";
+      }
+    }
+  });
 }
 
-});
 
-}
-
-// =============================================
+// ==========================================
 // RESET PROFILE FORM
-// =============================================
+// ==========================================
 
-if (resetProfileBtn) {
+if (resetButton) {
 
-resetProfileBtn.addEventListener("click", () => {
+  resetButton.addEventListener("click", () => {
 
-window.setTimeout(() => {  
+    if (!currentUser) return;
 
-  if (fullNameInput) {  
-    fullNameInput.value = originalName;  
-  }  
+    renderUser(currentUser);
 
-  if (dpInput) {  
-    dpInput.value = "";  
-  }  
+    if (photoInput) photoInput.value = "";
 
-  if (selectedFileName) {  
-
-    selectedFileName.textContent =  
-      "No new photo selected";  
-
-  }  
-
-  if (objectPreviewUrl) {  
-
-    URL.revokeObjectURL(objectPreviewUrl);  
-
-    objectPreviewUrl = null;  
-
-  }  
-
-  setPhoto(originalPhoto);  
-
-  setMessage("");  
-
-}, 0);
-
-});
-
+    showMessage("Changes have been reset.", "info");
+  });
 }
 
-// =============================================
+
+// ==========================================
+// AUTHENTICATION
+// ==========================================
+
+onAuthStateChanged(auth, (user) => {
+
+  if (!user) {
+    currentUser = null;
+
+    window.location.href = "login.html";
+    return;
+  }
+
+  renderUser(user);
+});
+
+
+// ==========================================
 // LOGOUT
-// =============================================
+// ==========================================
 
-if (logoutBtn) {
+if (logoutButton) {
 
-logoutBtn.addEventListener("click", async () => {
+  logoutButton.addEventListener("click", async () => {
 
-logoutBtn.disabled = true;  
+    try {
 
-try {  
+      await signOut(auth);
 
-  await signOut(auth);  
+      window.location.href = "login.html";
 
-  window.location.replace("auth.html");  
+    } catch (error) {
 
-} catch (error) {  
+      console.error("LOGOUT ERROR:", error);
 
-  console.error(  
-    "Logout failed:",  
-    error  
-  );  
-
-  setMessage(  
-    "Unable to log out right now. Please try again.",  
-    "error"  
-  );  
-
-  logoutBtn.disabled = false;  
-
-}
-
-});
-
-}
-
-// =============================================
-// FETCH USER FROM GOOGLE SHEETS
-// =============================================
-
-async function fetchUserFromSheet(uid) {
-
-try {
-
-const response = await fetch(  
-  `${SHEET_ENDPOINT}?uid=${encodeURIComponent(uid)}`  
-);  
-
-if (!response.ok) {  
-
-  throw new Error(  
-    `Sheet request failed: ${response.status}`  
-  );  
-
-}  
-
-const data = await response.json();  
-
-return data && typeof data === "object"  
-  ? data  
-  : null;
-
-} catch (error) {
-
-console.warn(  
-  "Could not fetch profile details from Google Sheets:",  
-  error  
-);  
-
-return null;
-
-}
-
-}
-
-// =============================================
-// UPDATE USER IN GOOGLE SHEETS
-// =============================================
-
-async function updateUserInSheet(
-uid,
-email,
-fullName,
-photoURL
-) {
-
-try {
-
-const response = await fetch(  
-  SHEET_ENDPOINT,  
-  {  
-    method: "POST",  
-
-    headers: {  
-      "Content-Type": "text/plain;charset=utf-8"  
-    },  
-
-    body: JSON.stringify({  
-
-      uid,  
-      email,  
-      fullName,  
-      photoURL,  
-
-      action: "update"  
-
-    })  
-
-  }  
-);  
-
-const responseText = await response.text();  
-
-try {  
-
-  return JSON.parse(responseText);  
-
-} catch {  
-
-  return {  
-    success: response.ok,  
-    message: responseText  
-  };  
-
-}
-
-} catch (error) {
-
-console.warn(  
-  "Profile saved, but Google Sheets update may have failed:",  
-  error  
-);  
-
-return null;
-
-}
-
-}
-
-// =============================================
-// END OF PROFILE CONTROLLER
-// =============================================
+      showMessage("Unable to log out. Please try again.", "error");
+    }
+  });
+  }
