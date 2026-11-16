@@ -2,107 +2,356 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bible — KFGC MEDIA APP</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- Favicon -->
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  
-  <style>
- /* HEADER */
-.header {
-    background-color: #0A1A44; /* Navy Blue */
-    color: white;
-    padding: 10px;
-    display: flex;
-    justify-content:space-between;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: 60px;
-    z-index: 1200;
-}
-.logo img {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-.h {
-    text-align: rigt;
-}
-.back-button {
-    position: absolute;
-    left: 10px;
-    font-size: 18px;
-    color: goldenrod;
-    text-decoration: none;
-}
-    /* FOOTER */
-.footer {
-    background-color: #0A1A44;
-    color: white;
-    padding: 12px;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    height: 80px;
-    left: 0;
-    text-align: center;
-    font-size: 14px;
+<meta name="theme-color" content="#08203a">
+
+<title>KFGC Holy Bible Reader</title>
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
 }
 
-.footer a {
-    color: gold;
-    font-weight: bold;
-    text-decoration: none;
+body{
+font-family:Arial,sans-serif;
+background:#f4f6fa;
+color:#08203a;
 }
-    
-   .search-box { margin-top: 100px; display:flex; gap:10px; margin-bottom:15px; }
-  input[type=text] { flex:1; padding:10px; border-radius:8px; border:1px solid #ccc; }
-  button { padding:10px 20px; border:none; border-radius:8px; background:var(--gold); cursor:pointer; font-weight:600; }
-  button:hover { background:#f0c961; }
-  .verse-container { background:#fff; padding:15px; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,.1); margin-bottom:15px; }
-  .verse-text { font-size:1rem; line-height:1.6; }
-  .verse-ref { font-weight:700; margin-bottom:8px; display:block; color:var(--navy); }
-  .msg { text-align:center; color:red; font-weight:600; margin-bottom:10px; }
+
+/* HEADER */
+
+header{
+background:#08203a;
+color:white;
+padding:22px 18px;
+}
+
+.header-content{
+max-width:850px;
+margin:auto;
+}
+
+header h2{
+color:#d9a441;
+margin-bottom:7px;
+}
+
+header p{
+font-size:14px;
+color:#ddd;
+}
+
+/* MAIN CONTAINER */
+
+.container{
+max-width:850px;
+margin:auto;
+padding:18px;
+}
+
+/* CARDS */
+
+.card{
+background:white;
+padding:18px;
+border-radius:14px;
+margin-bottom:18px;
+box-shadow:0 3px 12px rgba(0,0,0,.05);
+}
+
+.card h3{
+margin-bottom:15px;
+}
+
+/* INPUTS */
+
+select,input,textarea{
+width:100%;
+padding:13px;
+border:1px solid #ddd;
+border-radius:9px;
+font-size:15px;
+background:white;
+color:#08203a;
+}
+
+/* BUTTONS */
+
+button{
+cursor:pointer;
+padding:12px;
+border:0;
+border-radius:9px;
+font-size:14px;
+}
+
+.primary-btn{
+background:#08203a;
+color:white;
+}
+
+.gold-btn{
+background:#d9a441;
+color:#08203a;
+}
+
+/* FOOTER */
+
+footer{
+text-align:center;
+padding:25px;
+color:#777;
+font-size:13px;
+}
+
 </style>
 </head>
+
 <body>
-<header class="header">
-    <a href="javascript:history.back()" class="back-button">← Back</a>
-    <div class="logo">
-        <img src="kfgc.jpg" alt="Church Logo">
-        </div>
-    <h>KFGC BIBLE</h>
 
+<header>
+<div class="header-content">
+
+<h2>📖 KFGC HOLY BIBLE</h2>
+
+<p>Read • Study • Listen • Grow in Christ</p>
+
+</div>
 </header>
-<main>
-  <div class="msg" id="msg"></div>
 
-  <!-- Search Box -->
-  <div class="search-box">
-    <input type="text" id="searchInput" placeholder="Enter book chapter:verse e.g., John 3:16">
-    <button id="searchBtn">Search</button>
-  </div>
+<div class="container">
 
-  <!-- Verse of the Day -->
-  <div class="verse-container">
-    <span class="verse-ref" id="dailyRef">Verse of the Day</span>
-    <span class="verse-text" id="dailyText">Loading...</span>
-  </div>
+<!-- BIBLE READING -->
 
-  <!-- Search Results -->
-  <div id="searchResults"></div>
-</main>
+<div class="card">
+
+<h3>📚 Bible Reading</h3>
+
+<label>Bible Language</label>
+<select id="language">
+<option value="KJV">English (King James Version)</option>
+<option value="lug_bib">Luganda (Bayibuli Entukuvu)</option>
+</select>
+
+<br><br>
+
+<label>Select Bible Book</label>
+<select id="book">
+<option value="">Loading books...</option>
+</select>
+
+<br><br>
+
+<label>Select Chapter</label>
+<select id="chapter">
+<option value="1">Chapter 1</option>
+</select>
+
+<div style="display:flex;gap:10px;margin-top:18px;">
+
+<button class="primary-btn"
+onclick="changeChapter(-1)"
+style="flex:1;">
+← Previous
+</button>
+
+<button class="primary-btn"
+onclick="changeChapter(1)"
+style="flex:1;">
+Next →
+</button>
+
+</div>
+
+</div>
+
+  <!-- SAVED VERSES -->
+
+<div class="card">
+
+<h3>⭐ My Saved Bible Verses</h3>
+
+<button class="gold-btn"
+onclick="showBookmarks()"
+style="width:100%;">
+View My Bookmarks
+</button>
+
+<div id="bookmarkPanel" style="display:none;margin-top:15px;">
+
+<h4>Saved Verses</h4>
+
+<div id="savedVerses"></div>
+
+</div>
+
+</div>
+
+
+<!-- BIBLE STUDY NOTES -->
+
+<div class="card">
+
+<h3>📝 My Bible Study Notes</h3>
+
+<textarea
+id="studyNotes"
+placeholder="Write your Bible study notes here..."
+style="height:130px;resize:vertical;">
+</textarea>
+
+<button
+class="primary-btn"
+onclick="saveNotes()"
+style="width:100%;margin-top:12px;">
+
+Save My Notes
+
+</button>
+
+<p id="noteMessage"
+style="margin-top:10px;color:green;">
+</p>
+
+</div>
   
-<footer class="footer">
-  <p>&copy; 2026 KFGC Media App. All Rights Reserved.</p>
+  <!-- KFGC DAILY DEVOTIONAL -->
+
+<div class="card" style="
+background:linear-gradient(135deg,#08203a,#17466a);
+color:white;
+">
+
+<h3 style="color:#d9a441;">
+🙏 KFGC DAILY DEVOTIONAL
+</h3>
+
+<h2 id="devTitle" style="margin:15px 0;">
+Today's Message
+</h2>
+
+<h3 id="devVerse" style="color:#e9bd62;">
+Bible Reference
+</h3>
+
+<p id="devMessage"
+style="line-height:1.8;margin:15px 0;">
+Your daily encouragement from God's Word.
+</p>
+
+<hr style="border:1px solid #ffffff33;">
+
+<h4 style="margin-top:15px;">
+🙏 Today's Prayer
+</h4>
+
+<p id="devPrayer"
+style="line-height:1.8;margin:12px 0;">
+Today's prayer will appear here.
+</p>
+
+<h4>💭 Reflection</h4>
+
+<p id="devQuestion" style="margin:12px 0;">
+Think about today's message.
+</p>
+
+<button
+id="completeDev"
+class="gold-btn"
+onclick="completeDevotional()"
+style="width:100%;font-weight:bold;">
+
+Mark as Completed ✓
+
+</button>
+
+<p id="devStatus" style="margin-top:12px;"></p>
+
+</div>
+  
+  <!-- KFGC AUDIO BIBLE -->
+
+<div class="card">
+
+<h3>🔊 KFGC AUDIO BIBLE</h3>
+
+<p style="color:#777;margin-bottom:15px;">
+Listen to God's Word while following your Bible reading.
+</p>
+
+<div style="display:flex;gap:10px;">
+
+<button class="primary-btn"
+onclick="playBible()"
+style="flex:1;">
+▶ Play
+</button>
+
+<button class="gold-btn"
+onclick="pauseBible()"
+style="flex:1;">
+⏸ Pause
+</button>
+
+<button
+onclick="stopBible()"
+style="flex:1;background:#eee;">
+⏹ Stop
+</button>
+
+</div>
+
+<br>
+
+<label>Reading Speed</label>
+
+<select id="audioSpeed">
+<option value="0.7">Slow</option>
+<option value="1" selected>Normal</option>
+<option value="1.2">Fast</option>
+<option value="1.5">Very Fast</option>
+</select>
+
+<p id="audioStatus"
+style="margin-top:12px;color:#777;">
+Audio ready.
+</p>
+
+</div>
+<!-- VERSE SEARCH -->
+
+<div class="card">
+
+<h3>🔍 Search Bible</h3>
+
+<input
+type="search"
+id="verseSearch"
+placeholder="Search words in this chapter...">
+
+</div>
+
+<!-- SCRIPTURE DISPLAY -->
+
+<div class="card">
+
+<h3 id="heading">Holy Bible</h3>
+
+<p id="status">Select a Bible book to begin.</p>
+
+<div id="content"></div>
+
+</div>
+</div>
+
+<footer>
+KFGC Media App © 2026
 </footer>
-    
-<script type="module" src="bible.js"></script>
+<script src="bible.js"></script>
+
 </body>
-</html>
+    </html>
